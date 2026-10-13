@@ -117,3 +117,34 @@ opens from the app drawer.
   tree-shaken out. It appears in the bundle when Session E uses it.
 
 Next: Session E — the workout editor UI (Home list + editor screens).
+
+2026-10-13 — Session E: Home + workout editor
+- src/components/: HomeScreen (saved list, tap to select, New / Edit /
+  two-tap Delete, big Start), EditorScreen (name, exercises with add /
+  remove / rename / move up-down, steppers, loop toggle, live total,
+  Save / Cancel), NumberStepper (+/- snapping to the step grid, 72px
+  buttons, typed entry allowed), draft.ts (editor state <-> Workout).
+- Numbers are held as typed text in the editor so a cleared field shows as
+  invalid instead of snapping back. Messages come from validateWorkout and
+  are mapped to fields; a field's message shows once it is edited, all of
+  them after a Save attempt. Remove is disabled on the last exercise.
+- src/engine/duration.ts: workoutDurationSeconds + formatDuration, pure, for
+  the editor total now and the timer later. Rule: rest after every exercise
+  except the very last; at a loop boundary the between-loops rest REPLACES
+  the normal rest when it is on. Lead-in is not counted. Core 15 = 14:45.
+- Start has no timer yet: it records last-used and shows a placeholder.
+- Android back button: Capacitor 8 does nothing with back unless
+  @capacitor/app is installed — without it, back finished the activity from
+  the editor. Added @capacitor/app 8.1.2 and src/native/backButton.ts:
+  back pops the screen history (editor/start push a history entry), and on
+  Home it minimises the app. Browser back walks the same history.
+- Device: the A32 is on Android 13 / API 33, not API 30 as the vault says.
+- Verified ON THE A32 via adb taps + screenshots rather than npm run dev:
+  create, rename, reorder, steppers, cleared-field validation blocking Save,
+  loop off greying out loops fields, totals (2:45, 5:45, 10:10, 2:10 all
+  hand-checked), save, force-stop + relaunch persisted with selection kept,
+  edit shows saved order, back returns to Home, two-tap delete.
+- Tests: 65 passing across 6 files (duration + draft added). Lint clean.
+  Bundle 233 kB JS / 72.8 kB gzip.
+
+Next: Session F — timer engine.
