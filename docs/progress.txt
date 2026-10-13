@@ -251,3 +251,44 @@ Next: Session G — timer screen.
   locked, which is out of scope. Samsung "sleeping apps" acts on apps unused
   for days, not a workout's minutes.
 - 83 tests passing, lint clean.
+
+2026-10-13 — Session H: spoken cues (done after J)
+- @capacitor-community/text-to-speech 8.0.2; android:sync now lists 3
+  plugins (keep-awake, text-to-speech, app).
+- src/audio/cues.ts (pure, tested): segmentCue -> "Get ready. X", "X",
+  "Rest. Next up: X", "Loop N complete. Rest. Next up: X" (N = segment.loop
+  - 1, since a loop rest belongs to the loop about to start), plus
+  "Workout complete". chooseVoice ranks voices: en-GB > en-IE/AU/NZ/ZA >
+  en-US > other en; on-device beats network (offline); default breaks ties;
+  non-English never chosen. Returns null rather than failing.
+- src/audio/speech.ts: getSpeech() singleton. Android -> plugin, browser ->
+  speechSynthesis directly (waits on voiceschanged). say() is never awaited,
+  every error is logged and swallowed, QueueStrategy.Flush so a new cue
+  replaces a stale one. Logs the chosen voice ("GymTime speech: ...").
+  Created at app start in main.tsx so the voice is picked before the first
+  cue (first device run showed the lookup racing the lead-in cue).
+- TimerScreen speaks on segmentStart and workoutComplete; on stop/leave it
+  cancels speech, but not after completion, so "Workout complete" plays out
+  if Done is tapped quickly.
+- SAMSUNG TTS FINDING: the A32 uses com.samsung.SMT (Google TTS also
+  installed; no default set). It DOES have an on-device en-GB voice
+  (en-GB-SMTf00 / eng-GBR-f00). But the plugin reports Samsung voices with
+  ISO-639-2 tags and no country — lang "eng-x-lvariant-f00" / "eng-default"
+  for both GB and US — so a lang-only match found nothing. The country is in
+  voiceURI ("en-GB-SMTf00"); voiceTag() reads it, and "eng" maps to "en".
+  We pass a clean "en-GB" as lang too, because setLanguage on
+  "eng-x-lvariant-f00" would drop the country. Pinned with tests built
+  from the real voice list.
+- Verified ON THE A32 via logcat: voice log "en-GB-SMTf00 (en-GB, on-device)
+  of 18 voices"; every cue of Test 3x10 requested en-GB-SMTf00 within ~30ms
+  of its segment boundary (5s/10s spacing exact); "Workout complete" at the
+  end; Stop issued TextToSpeech.stop. Media volume was 2/15 — left alone.
+- NOT done: the browser run. No browser is available to this session (and
+  audio could not be heard either way); speechSynthesis path is untested.
+- WATCH ITEM: once, the last-used workout reverted to an older value after
+  the app was replaced by adb install -r (17:13 write lost, 17:08 kept).
+  Not reproducible in 4 tries (force-stop after 2s, 10s, 5 min; install
+  over a live app). Workouts themselves were never lost. If it recurs, swap
+  WebKeyValueStore for @capacitor/preferences — the KeyValueStore seam was
+  built for that.
+- 97 tests passing (14 new), lint clean.

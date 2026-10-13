@@ -5,6 +5,8 @@ import { WorkoutTimer, type TimerState } from '../engine/timer'
 import { formatDuration } from '../engine/duration'
 import { allowScreenSleep, keepScreenOn } from '../native/keepAwake'
 import { onReturnToForeground } from '../native/appState'
+import { getSpeech } from '../audio/speech'
+import { COMPLETE_CUE, segmentCue } from '../audio/cues'
 
 const PHASE_LABEL: Record<SegmentType, string> = {
   leadIn: 'Get ready',
@@ -36,15 +38,22 @@ export function TimerScreen({ workout, onDone, setBackInterceptor }: TimerScreen
 
   useEffect(() => {
     const timer = new WorkoutTimer(segments)
+    const speech = getSpeech()
     timerRef.current = timer
     const unsubscribe = [
       timer.on('tick', setState),
-      timer.on('workoutComplete', () => setWallMs(Date.now() - wallStart.current)),
+      timer.on('segmentStart', (segment) => speech.say(segmentCue(segment))),
+      timer.on('workoutComplete', () => {
+        setWallMs(Date.now() - wallStart.current)
+        speech.say(COMPLETE_CUE)
+      }),
     ]
     wallStart.current = Date.now()
-    timer.start() // emits the first tick, which fills in state
+    timer.start() // emits the first tick and the lead-in cue
     return () => {
       unsubscribe.forEach((off) => off())
+      // Stopped or abandoned: cut speech off. Finished: let "Workout complete" play out.
+      if (timer.getState().status !== 'complete') speech.cancel()
       timer.stop()
       timerRef.current = null
     }
