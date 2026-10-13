@@ -18,3 +18,5 @@ export {
   createId,
   createSeedWorkout,
 } from './workoutStore'
+export type { Settings } from './settingsStore'
+export { DEFAULT_SETTINGS, SettingsStore } from './settingsStore'

@@ -292,3 +292,26 @@ Next: Session G — timer screen.
   WebKeyValueStore for @capacitor/preferences — the KeyValueStore seam was
   built for that.
 - 97 tests passing (14 new), lint clean.
+
+2026-10-13 — Session I: countdown beeps and sound settings
+- src/audio/beeps.ts: Web Audio sine tones, no files. 3 and 2: 880 Hz,
+  120 ms; 1: 1320 Hz, 450 ms. 10 ms fade in/out against clicks. One shared
+  AudioContext created and resumed by unlock() inside the Start tap (both
+  browsers and the WebView need a gesture); beep() re-resumes if the context
+  was suspended by backgrounding. Errors logged, never thrown.
+- src/storage/settingsStore.ts: SettingsStore { speech, beeps }, default
+  both on, key gymtime.settings, falls back field by field on bad data.
+- Home: "Speech: On/Off" and "Beeps: On/Off" switches above New/Edit/Delete.
+  Outlined (not filled) when on so Start stays the loudest thing on Home.
+  TimerScreen reads the settings once at start; they only change on Home.
+- Verified ON THE A32 by attaching to the WebView's DevTools socket
+  (adb forward tcp:9222 localabstract:webview_devtools_remote_<pid>) and
+  listening to CDP WebAudio.audioNodeCreated: oscillators came in triplets
+  exactly 1.00 s apart (3-2-1), triplets 5 s / 10 s apart matching rest/work.
+  The context's AAudio stream starts on the Start tap (dumpsys audio).
+  Turning both off persisted through force-stop + relaunch, and a 20 s run
+  then produced zero oscillators and zero TextToSpeech.speak calls. Both
+  switched back on afterwards.
+- NOT done: listening by ear, and the browser run (no browser available to
+  this session). Media volume on the phone is 2/15.
+- 102 tests passing (5 new), lint clean.

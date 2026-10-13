@@ -337,6 +337,17 @@
   -webkit-tap-highlight-color: transparent;
 }
 
+.sound-toggle {
+  flex: 1;
+  min-width: 0;
+}
+
+/* Outlined rather than filled when on, so Start stays the loudest thing on Home. */
+.sound-toggle.toggle--on {
+  background: var(--surface);
+  color: var(--accent);
+}
+
 .toggle--on {
   border-color: var(--accent);
   background: var(--accent);

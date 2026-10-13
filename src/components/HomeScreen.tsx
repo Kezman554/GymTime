@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import type { Workout } from '../storage'
+import type { Settings, Workout } from '../storage'
 import { formatDuration, workoutDurationSeconds } from '../engine/duration'
 
 interface HomeScreenProps {
@@ -10,7 +10,14 @@ interface HomeScreenProps {
   onEdit: (workout: Workout) => void
   onDelete: (workout: Workout) => void
   onStart: (workout: Workout) => void
+  settings: Settings
+  onSettingsChange: (settings: Settings) => void
 }
+
+const SOUND_OPTIONS: { key: keyof Settings; label: string }[] = [
+  { key: 'speech', label: 'Speech' },
+  { key: 'beeps', label: 'Beeps' },
+]
 
 function summary(workout: Workout): string {
   const loops = workout.loopEnabled ? workout.loops : 1
@@ -28,6 +35,8 @@ export function HomeScreen({
   onEdit,
   onDelete,
   onStart,
+  settings,
+  onSettingsChange,
 }: HomeScreenProps) {
   const selected = workouts.find((workout) => workout.id === selectedId) ?? null
   // Delete takes two taps: the first arms it for the selected workout, the second deletes.
@@ -62,6 +71,20 @@ export function HomeScreen({
       )}
 
       <div className="home__footer">
+        <div className="button-row sound-toggles" role="group" aria-label="Sound">
+          {SOUND_OPTIONS.map(({ key, label }) => (
+            <button
+              key={key}
+              type="button"
+              role="switch"
+              aria-checked={settings[key]}
+              className={`toggle sound-toggle${settings[key] ? ' toggle--on' : ''}`}
+              onClick={() => onSettingsChange({ ...settings, [key]: !settings[key] })}
+            >
+              {label}: {settings[key] ? 'On' : 'Off'}
+            </button>
+          ))}
+        </div>
         <div className="button-row button-row--three">
           <button type="button" className="btn btn--large" onClick={onNew}>
             New

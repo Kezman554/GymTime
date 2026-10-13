@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import type { Workout } from '../storage'
+import type { Settings, Workout } from '../storage'
 import { buildSegments, totalSeconds, type SegmentType } from '../engine/sequence'
 import { WorkoutTimer, type TimerState } from '../engine/timer'
 import { formatDuration } from '../engine/duration'
@@ -7,6 +7,7 @@ import { allowScreenSleep, keepScreenOn } from '../native/keepAwake'
 import { onReturnToForeground } from '../native/appState'
 import { getSpeech } from '../audio/speech'
 import { COMPLETE_CUE, segmentCue } from '../audio/cues'
+import { getBeeps } from '../audio/beeps'
 
 const PHASE_LABEL: Record<SegmentType, string> = {
   leadIn: 'Get ready',
@@ -22,12 +23,14 @@ function clockText(seconds: number): string {
 
 interface TimerScreenProps {
   workout: Workout
+  /** Read once at start; sound can only be changed on Home. */
+  settings: Settings
   onDone: () => void
   /** App calls this when Android/browser back is pressed; return true to stay put. */
   setBackInterceptor: (intercept: (() => boolean) | null) => void
 }
 
-export function TimerScreen({ workout, onDone, setBackInterceptor }: TimerScreenProps) {
+export function TimerScreen({ workout, settings, onDone, setBackInterceptor }: TimerScreenProps) {
   const segments = useMemo(() => buildSegments(workout), [workout])
   const timerRef = useRef<WorkoutTimer | null>(null)
   const [state, setState] = useState<TimerState | null>(null)
@@ -39,13 +42,16 @@ export function TimerScreen({ workout, onDone, setBackInterceptor }: TimerScreen
   useEffect(() => {
     const timer = new WorkoutTimer(segments)
     const speech = getSpeech()
+    const beeps = getBeeps()
+    const { speech: speak, beeps: beep } = settings
     timerRef.current = timer
     const unsubscribe = [
       timer.on('tick', setState),
-      timer.on('segmentStart', (segment) => speech.say(segmentCue(segment))),
+      timer.on('segmentStart', (segment) => speak && speech.say(segmentCue(segment))),
+      timer.on('countdownTick', (seconds) => beep && beeps.beep(seconds)),
       timer.on('workoutComplete', () => {
         setWallMs(Date.now() - wallStart.current)
-        speech.say(COMPLETE_CUE)
+        if (speak) speech.say(COMPLETE_CUE)
       }),
     ]
     wallStart.current = Date.now()
@@ -57,7 +63,7 @@ export function TimerScreen({ workout, onDone, setBackInterceptor }: TimerScreen
       timer.stop()
       timerRef.current = null
     }
-  }, [segments])
+  }, [segments, settings])
 
   const status = state?.status ?? 'idle'
   const finished = status === 'complete'

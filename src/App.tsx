@@ -1,12 +1,21 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import './App.css'
-import { WorkoutStore, type NewWorkout, type Workout } from './storage'
+import {
+  DEFAULT_SETTINGS,
+  SettingsStore,
+  WorkoutStore,
+  type NewWorkout,
+  type Settings,
+  type Workout,
+} from './storage'
 import { HomeScreen } from './components/HomeScreen'
 import { EditorScreen } from './components/EditorScreen'
 import { TimerScreen } from './components/TimerScreen'
 import { DEFAULT_WORKOUT } from './components/draft'
+import { getBeeps } from './audio/beeps'
 
 const store = new WorkoutStore()
+const settingsStore = new SettingsStore()
 
 // StrictMode runs effects twice in development; two concurrent seedIfEmpty
 // calls would both see an empty library and seed it twice.
@@ -22,6 +31,7 @@ function App() {
   const [screen, setScreen] = useState<Screen>({ kind: 'home' })
   const [workouts, setWorkouts] = useState<Workout[] | null>(null)
   const [selectedId, setSelectedId] = useState<string | null>(null)
+  const [settings, setSettings] = useState<Settings>(DEFAULT_SETTINGS)
 
   const refresh = useCallback(async () => {
     const list = await store.listWorkouts()
@@ -33,8 +43,14 @@ function App() {
     let cancelled = false
     void (async () => {
       await seedOnce()
-      const [, lastUsed] = await Promise.all([refresh(), store.getLastUsedWorkout()])
-      if (!cancelled) setSelectedId(lastUsed?.id ?? null)
+      const [, lastUsed, savedSettings] = await Promise.all([
+        refresh(),
+        store.getLastUsedWorkout(),
+        settingsStore.load(),
+      ])
+      if (cancelled) return
+      setSelectedId(lastUsed?.id ?? null)
+      setSettings(savedSettings)
     })()
     return () => {
       cancelled = true
@@ -84,6 +100,11 @@ function App() {
     backToHome()
   }
 
+  const changeSettings = (next: Settings) => {
+    setSettings(next)
+    void settingsStore.save(next)
+  }
+
   const remove = async (workout: Workout) => {
     await store.deleteWorkout(workout.id)
     const list = await refresh()
@@ -102,6 +123,7 @@ function App() {
       return (
         <TimerScreen
           workout={screen.workout}
+          settings={settings}
           onDone={backToHome}
           setBackInterceptor={setBackInterceptor}
         />
@@ -115,7 +137,11 @@ function App() {
           onNew={() => open({ kind: 'editor', initial: { ...DEFAULT_WORKOUT } })}
           onEdit={(workout) => open({ kind: 'editor', initial: workout })}
           onDelete={(workout) => void remove(workout)}
+          settings={settings}
+          onSettingsChange={changeSettings}
           onStart={(workout) => {
+            // Inside the tap, so the browser/WebView lets audio start.
+            getBeeps().unlock()
             void store.setLastUsedWorkoutId(workout.id)
             open({ kind: 'timer', workout })
           }}
