@@ -1,0 +1,17 @@
+.app {
+  min-height: 100dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+}
+
+.title {
+  margin: 0;
+  font-size: clamp(3rem, 18vw, 7rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1;
+  color: #f4f4f5;
+  text-align: center;
+}

@@ -1,0 +1,28 @@
+GymTime — progress log
+======================
+
+2026-10-13 — Session A: scaffold
+- Vite + React 19 + TypeScript (vite 8.3, vitest 5.0). Scaffolded into a temp
+  directory and copied in, so the existing CLAUDE.md and docs/ were never at
+  risk from the scaffolder's "remove existing files" prompt.
+- Folders: src/components/, src/engine/, src/audio/, src/storage/, tests/.
+- Vitest added with tests/placeholder.test.ts and an npm "test" script
+  (vitest run). 1 test passing.
+- .gitignore extends the template with .env, .env.local, android/build,
+  android/app/build, android/.gradle, android/local.properties. Note
+  android/app/build is listed separately: it is NOT covered by android/build,
+  and it is where the debug APK lands (android/app/build/outputs/apk/debug/).
+  This repo is public.
+- App.tsx shows "GymTime" large and centred on #0b0b0d. index.css sets the
+  dark base and color-scheme; index.html gets the GymTime title, a theme-color
+  and viewport-fit=cover for the phone's safe areas.
+- Removed the unused template art (src/assets/). public/favicon.svg is still
+  Vite's own — Session K replaces the icon.
+- Verified: npm run test (1 passed), npm run build (tsc -b clean, 219.60 kB JS
+  / 68.61 kB gzip), npm run dev serving the dark GymTime screen. Dev server
+  came up on 5174, not 5173 — DocuSync's dev server holds 5173 on this machine.
+- git initialised on master (matching DocuSync) with origin pointed at
+  https://github.com/Kezman554/GymTime.git. The remote is empty; nothing pushed
+  yet, per CLAUDE.md.
+
+Next: Session B — Capacitor Android wrapper and the first debug APK.
