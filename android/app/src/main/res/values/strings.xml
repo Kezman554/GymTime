@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">GymTime</string>
+    <string name="title_activity_main">GymTime</string>
+    <string name="package_name">cloud.nickyoung.gymtime</string>
+    <string name="custom_url_scheme">cloud.nickyoung.gymtime</string>
+</resources>

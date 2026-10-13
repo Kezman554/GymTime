@@ -26,3 +26,44 @@ GymTime — progress log
   yet, per CLAUDE.md.
 
 Next: Session B — Capacitor Android wrapper and the first debug APK.
+
+2026-10-13 — Session B: Capacitor Android wrapper
+- Capacitor 8.5.3: @capacitor/core + @capacitor/android as dependencies,
+  @capacitor/cli as a devDependency. Telemetry opted out.
+- capacitor.config.ts: appId cloud.nickyoung.gymtime, appName GymTime,
+  webDir dist.
+- Android platform added. MainActivity locked to portrait via
+  android:screenOrientation="portrait" in AndroidManifest.xml.
+- android/local.properties written with sdk.dir pointing at
+  C:/Users/Nick/AppData/Local/Android/Sdk (forward slashes — a Java properties
+  file treats a lone backslash as an escape, so C\:\Users\... silently
+  resolves to C:UsersNick...). Already gitignored by Capacitor's own
+  android/.gitignore.
+- npm scripts:
+    android:sync  = npm run build && cap sync android
+    android:apk   = npm run android:sync && android\gradlew.bat -p android assembleDebug
+
+  NOTE the apk script does NOT use "cd android && gradlew.bat". That form
+  works from PowerShell but fails from Git Bash, which sets
+  NoDefaultCurrentDirectoryInExePath=1 and so stops cmd.exe resolving
+  gradlew.bat in the current directory. The explicit path plus -p works from
+  any shell. Windows-only either way (gradlew.bat).
+
+- APK OUTPUT PATH:
+    android/app/build/outputs/apk/debug/app-debug.apk
+
+- Verified on the built artefact, not just the source: package
+  cloud.nickyoung.gymtime, label GymTime, launchable activity
+  cloud.nickyoung.gymtime.MainActivity, screenOrientation=1 (portrait),
+  minSdk 24, target/compile SDK 36, versionCode 1 / versionName 1.0.
+  4.1 MB. BUILD SUCCESSFUL in 2m 28s, 93 tasks (first run, nothing cached).
+- Toolchain: Gradle 8.14.3 on the JBR JDK 21.0.10, SDK platforms 35/36/36.1
+  and build-tools 34/36/36.1/37 already installed from DailySync.
+- minSdk 24 settles the PRD's open question: the A32 at API 30 clears it
+  whatever OS version the phone is actually on now.
+- npm audit: 3 moderate advisories, all one chain — uuid <11.1.1 via xcode via
+  @capacitor/cli. Dev-only (the iOS project generator; this app has no iOS
+  target) and the fix is a breaking downgrade of the CLI. Not addressed.
+
+Next: Session C — manual. Copy app-debug.apk to the phone and confirm GymTime
+opens from the app drawer.
