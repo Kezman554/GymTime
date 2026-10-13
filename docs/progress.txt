@@ -184,3 +184,29 @@ Next: Session F — timer engine.
 - No UI change, so nothing new on the phone this session.
 
 Next: Session G — timer screen.
+
+2026-10-13 — Session G: timer screen
+- src/components/TimerScreen.tsx: opens from Start with the selected
+  workout and starts the lead-in straight away. Huge clock (seconds, mm:ss
+  above 60), phase label, "Loop N of M" (hidden for one loop), segment
+  progress bar, exercise name large with "Next: X" (or "Last one!") during
+  work and "Up next" + name during lead-in and rests.
+- Full-bleed phase colours, each >= 4.5:1 with white text: lead-in amber
+  #b45309, work green #15803d, rest blue #1d4ed8, loop rest indigo #3730a3,
+  complete violet #6d28d9, paused grey #3f3f46.
+- Pause/Resume and Stop at 88px. Stop asks "Stop this workout?" with the
+  buttons SWAPPED (Stop left, Keep going right) so a double-tap on Stop lands
+  on Keep going — found on the device, where the first layout let a
+  double-tap skip the confirm.
+- Back button mid-workout opens the same confirm instead of quitting: App
+  gained a back interceptor a screen can set; popstate re-pushes the entry
+  when it is claimed. App's own backToHome clears it first.
+- Completion screen: workout name, total time (segments incl. lead-in) and
+  "plus m:ss paused" from wall-clock time when there were pauses; Done -> Home.
+- Verified ON THE A32 with "Test 3x10" (3 x 10s/5s x 2 = 1:25 + 5s lead-in):
+  timed screenshots matched elapsed time in lead-in, work and rest; pause
+  held the clock; Stop and Back both confirm; ran to completion showing
+  1:30 plus 0:09 paused (matches the script's pause); Done returned Home;
+  confirmed Stop returns Home. "Test 3x10" left on the phone for you to try.
+- No speech or beeps yet, and the screen can still sleep mid-workout
+  (keep-awake comes later). 83 tests passing, lint clean.

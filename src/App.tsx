@@ -1,8 +1,9 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import './App.css'
 import { WorkoutStore, type NewWorkout, type Workout } from './storage'
 import { HomeScreen } from './components/HomeScreen'
 import { EditorScreen } from './components/EditorScreen'
+import { TimerScreen } from './components/TimerScreen'
 import { DEFAULT_WORKOUT } from './components/draft'
 
 const store = new WorkoutStore()
@@ -15,7 +16,7 @@ const seedOnce = () => (seeding ??= store.seedIfEmpty())
 type Screen =
   | { kind: 'home' }
   | { kind: 'editor'; initial: NewWorkout | Workout }
-  | { kind: 'started'; workout: Workout }
+  | { kind: 'timer'; workout: Workout }
 
 function App() {
   const [screen, setScreen] = useState<Screen>({ kind: 'home' })
@@ -40,10 +41,23 @@ function App() {
     }
   }, [refresh])
 
+  // A screen can claim the back button (the timer asks before stopping).
+  const backInterceptor = useRef<(() => boolean) | null>(null)
+  const setBackInterceptor = useCallback((intercept: (() => boolean) | null) => {
+    backInterceptor.current = intercept
+  }, [])
+
   // Screens other than Home sit on a history entry, so the Android back button
   // (see native/backButton) and the browser's back both return to Home.
   useEffect(() => {
-    const onPopState = () => setScreen({ kind: 'home' })
+    const onPopState = () => {
+      if (backInterceptor.current?.()) {
+        // Put back the entry the back press consumed, and stay on this screen.
+        window.history.pushState({ screen: 'intercepted' }, '')
+        return
+      }
+      setScreen({ kind: 'home' })
+    }
     window.addEventListener('popstate', onPopState)
     return () => window.removeEventListener('popstate', onPopState)
   }, [])
@@ -52,7 +66,11 @@ function App() {
     window.history.pushState({ screen: next.kind }, '')
     setScreen(next)
   }
-  const backToHome = () => window.history.back()
+  // The app's own way home is never intercepted.
+  const backToHome = () => {
+    backInterceptor.current = null
+    window.history.back()
+  }
 
   const select = (id: string) => {
     setSelectedId(id)
@@ -80,15 +98,13 @@ function App() {
   switch (screen.kind) {
     case 'editor':
       return <EditorScreen initial={screen.initial} onSave={save} onCancel={backToHome} />
-    case 'started':
+    case 'timer':
       return (
-        <main className="screen placeholder">
-          <h1 className="screen__title">{screen.workout.name}</h1>
-          <p className="empty">The timer arrives in a later session.</p>
-          <button type="button" className="btn btn--large" onClick={backToHome}>
-            Back
-          </button>
-        </main>
+        <TimerScreen
+          workout={screen.workout}
+          onDone={backToHome}
+          setBackInterceptor={setBackInterceptor}
+        />
       )
     case 'home':
       return (
@@ -101,7 +117,7 @@ function App() {
           onDelete={(workout) => void remove(workout)}
           onStart={(workout) => {
             void store.setLastUsedWorkoutId(workout.id)
-            open({ kind: 'started', workout })
+            open({ kind: 'timer', workout })
           }}
         />
       )

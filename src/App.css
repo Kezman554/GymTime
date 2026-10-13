@@ -373,9 +373,173 @@
   line-height: 1.4;
 }
 
-/* Placeholder for Start until the timer screen lands */
+/* Timer: full-bleed phase colour, readable from across the room */
 
-.placeholder {
+.timer {
+  --phase: #27272a;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  padding: max(1rem, env(safe-area-inset-top)) 1rem max(1rem, env(safe-area-inset-bottom));
+  background: var(--phase);
+  color: #fff;
+  transition: background-color 250ms ease;
+}
+
+/* White text on each of these is at least 4.5:1. */
+.timer--leadIn { --phase: #b45309; }
+.timer--work { --phase: #15803d; }
+.timer--rest { --phase: #1d4ed8; }
+.timer--loopRest { --phase: #3730a3; }
+.timer--complete { --phase: #6d28d9; }
+.timer.is-paused { --phase: #3f3f46; }
+
+.timer__body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
   justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  max-width: 560px;
+  width: 100%;
+  margin: 0 auto;
   text-align: center;
+}
+
+.timer__top {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1rem;
+}
+
+.timer__phase {
+  margin: 0;
+  font-size: 2rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.timer--complete .timer__phase {
+  font-size: 1.75rem;
+}
+
+.timer__meta {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+  opacity: 0.9;
+}
+
+.timer__clock {
+  margin: 0;
+  font-size: clamp(7rem, 48vw, 16rem);
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  letter-spacing: -0.04em;
+}
+
+.timer__progress {
+  width: 100%;
+  height: 16px;
+  margin: 0.5rem 0 1.25rem;
+  border-radius: 999px;
+  background: rgb(0 0 0 / 0.3);
+  overflow: hidden;
+}
+
+.timer__progress-fill {
+  height: 100%;
+  background: #fff;
+  transform-origin: left center;
+  transition: transform 100ms linear;
+}
+
+.timer__upnext {
+  margin: 0;
+  font-size: 1.375rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  opacity: 0.85;
+}
+
+.timer__exercise {
+  margin: 0;
+  font-size: clamp(2.5rem, 12vw, 4.5rem);
+  font-weight: 800;
+  line-height: 1.05;
+  overflow-wrap: anywhere;
+}
+
+.timer__next {
+  margin: 0.25rem 0 0;
+  font-size: 1.75rem;
+  font-weight: 600;
+  opacity: 0.9;
+  overflow-wrap: anywhere;
+}
+
+.timer__total-label {
+  margin: 1.5rem 0 0;
+  font-size: 1.375rem;
+  font-weight: 700;
+  opacity: 0.85;
+}
+
+.timer__total {
+  margin: 0;
+  font-size: clamp(5rem, 30vw, 9rem);
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+.timer__controls {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  max-width: 560px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.timer__confirm {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 800;
+  text-align: center;
+}
+
+.timer__btn {
+  flex: 1;
+  min-height: 88px;
+  border-color: rgb(255 255 255 / 0.6);
+  background: rgb(0 0 0 / 0.25);
+  color: #fff;
+  padding: 0 0.5rem;
+  font-size: 1.75rem;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+/* "Keep going" has to fit half the width on one line. */
+.timer__confirm + .button-row .timer__btn {
+  font-size: 1.375rem;
+}
+
+.timer__btn--primary {
+  border-color: #fff;
+  background: #fff;
+  color: #111;
+}
+
+.timer__btn--stop {
+  border-color: #fecaca;
+  background: #7f1d1d;
+  color: #fff;
 }
