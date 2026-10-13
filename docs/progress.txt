@@ -210,3 +210,44 @@ Next: Session G — timer screen.
   confirmed Stop returns Home. "Test 3x10" left on the phone for you to try.
 - No speech or beeps yet, and the screen can still sleep mid-workout
   (keep-awake comes later). 83 tests passing, lint clean.
+
+2026-10-13 — Session J: keep-awake and backgrounding (H and I skipped)
+- @capacitor-community/keep-awake 8.0.1 behind src/native/keepAwake.ts
+  (errors logged and swallowed). TimerScreen holds the screen on while the
+  workout is running OR paused and releases it on stop, completion and
+  leaving the screen. Android: FLAG_KEEP_SCREEN_ON; browser: Wake Lock API,
+  re-taken on return because browsers drop it when hidden.
+- src/native/appState.ts: onReturnToForeground via App appStateChange
+  (visibilitychange in the browser). On return the timer ticks at once, so
+  clock, segment and progress are right immediately rather than on the next
+  throttled interval. Only the current cue fires (Session F behaviour).
+- Back-button confirm was already done in Session G; re-verified.
+- CLOCK CHANGE: systemClock now uses Date.now, not performance.now. On
+  Android, Chromium's monotonic clock stops while the device is suspended,
+  so a workout left with the phone locked would come back behind. Date.now
+  keeps counting through suspend; the trade-off is exposure to a rare
+  wall-clock correction mid-workout. Engine tests unaffected (fake clock).
+- npm run android:sync: 2 plugins (keep-awake, app).
+- Verified ON THE A32 (screen timeout dropped to 15s for the test, restored
+  to the user's 30 min after):
+  - Core 15 untouched for 125s: screen Awake at every 10s poll; screenshot
+    at 126s showed exercise 3 with 44s left — exactly as computed.
+  - Window flags (dumpsys window, bit 0x80): KEEP_SCREEN_ON set while
+    running and paused; clear on Home, after Stop, and on completion.
+  - Accidental extra test: the 15s timeout slept the screen while Settings
+    was in front and the phone locked with the workout running behind it.
+    ~100s later, after unlock: rest before exercise 5 with 2s left — correct.
+  - Clean 20s switch to Settings and back: 15.4s into exercise 5's work,
+    showing 16 — correct.
+- BATTERY OPTIMISATION — answer: NO exclusion needed for now. GymTime was
+  tested on Samsung's defaults (not on the deviceidle whitelist, standby
+  bucket 10/ACTIVE, RUN_ANY_IN_BACKGROUND allow). Optimisation only limits
+  apps in the background; in the foreground the screen stays on and the
+  timer runs, and after backgrounding or a lock the timer is right because
+  it is recomputed from timestamps on return, not because it ran meanwhile.
+  Caveats: the phone was on USB power, so Doze was not exercised; that does
+  not change the answer, for the same reason. Exclusion (plus a foreground
+  service) would only matter if cues had to play while backgrounded or
+  locked, which is out of scope. Samsung "sleeping apps" acts on apps unused
+  for days, not a workout's minutes.
+- 83 tests passing, lint clean.

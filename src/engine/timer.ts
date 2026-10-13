@@ -10,8 +10,14 @@ export interface Clock {
   clearInterval(handle: unknown): void
 }
 
+/**
+ * Date.now rather than performance.now: on Android, Chromium's monotonic clock
+ * stops while the device is suspended, so a workout left with the phone locked
+ * would come back behind by however long it slept. Wall-clock time keeps
+ * counting through suspend; the cost is exposure to a rare clock correction.
+ */
 export const systemClock: Clock = {
-  now: () => performance.now(),
+  now: () => Date.now(),
   setInterval: (callback, ms) => globalThis.setInterval(callback, ms),
   clearInterval: (handle) => globalThis.clearInterval(handle as ReturnType<typeof setInterval>),
 }

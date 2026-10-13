@@ -3,6 +3,8 @@ import type { Workout } from '../storage'
 import { buildSegments, totalSeconds, type SegmentType } from '../engine/sequence'
 import { WorkoutTimer, type TimerState } from '../engine/timer'
 import { formatDuration } from '../engine/duration'
+import { allowScreenSleep, keepScreenOn } from '../native/keepAwake'
+import { onReturnToForeground } from '../native/appState'
 
 const PHASE_LABEL: Record<SegmentType, string> = {
   leadIn: 'Get ready',
@@ -50,6 +52,31 @@ export function TimerScreen({ workout, onDone, setBackInterceptor }: TimerScreen
 
   const status = state?.status ?? 'idle'
   const finished = status === 'complete'
+
+  // Screen stays on while running or paused; sleep is allowed again on
+  // stop, completion or leaving the screen.
+  const holdScreen = status === 'running' || status === 'paused'
+  useEffect(() => {
+    if (!holdScreen) return
+    keepScreenOn()
+    return allowScreenSleep
+  }, [holdScreen])
+
+  // Timers are throttled or frozen in the background. Elapsed time is always
+  // derived from timestamps, so on return one immediate tick puts the clock,
+  // segment and progress right without waiting for the next interval.
+  useEffect(
+    () =>
+      onReturnToForeground(() => {
+        const timer = timerRef.current
+        if (!timer) return
+        timer.tick()
+        // The browser drops a wake lock when hidden; re-take it on return.
+        const { status: now } = timer.getState()
+        if (now === 'running' || now === 'paused') keepScreenOn()
+      }),
+    [],
+  )
 
   // Back mid-workout asks to stop rather than silently abandoning it.
   useEffect(() => {
