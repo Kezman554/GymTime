@@ -67,3 +67,53 @@ Next: Session B — Capacitor Android wrapper and the first debug APK.
 
 Next: Session C — manual. Copy app-debug.apk to the phone and confirm GymTime
 opens from the app drawer.
+
+2026-10-13 — Session D: workout data model and storage
+- src/storage/types.ts: Workout { id, name, exercises[], workSeconds,
+  restSeconds, loops, loopEnabled, restBetweenLoopsSeconds } plus NewWorkout
+  (the same without an id, which is what the editor hands over).
+- THE STORAGE INTERFACE IS ASYNC ON PURPOSE. KeyValueStore returns Promises
+  even though localStorage is synchronous, because @capacitor/preferences —
+  the documented replacement — is Promise-based. A synchronous interface here
+  would have made that swap a rewrite of every caller instead of one new
+  class. Sessions E and G must therefore await the store.
+- src/storage/keyValueStore.ts: KeyValueStore interface; WebKeyValueStore
+  (takes any Storage-shaped object, defaults to localStorage);
+  MemoryKeyValueStore (tests, and the fallback); createDefaultStore() probes
+  localStorage with a write and falls back to memory, because localStorage
+  throws rather than returning null when site data is blocked.
+- src/storage/workoutStore.ts: listWorkouts, getWorkout, saveWorkout (creates
+  when there is no id, updates in place when the id is known), deleteWorkout
+  (returns whether anything went), getLastUsedWorkoutId / setLastUsedWorkoutId,
+  getLastUsedWorkout (last used -> first saved -> null, so Home always has
+  something to select), seedIfEmpty.
+- Validation: name required, >= 1 exercise, no blank exercise names, work and
+  rest >= 5s, loops >= 1, all whole numbers. restBetweenLoopsSeconds is 0 for
+  off, otherwise >= 5 — 0 is a documented value, not a validation failure.
+  validateWorkout returns EVERY problem, not the first; saveWorkout throws
+  WorkoutValidationError and writes nothing.
+- createId prefers crypto.randomUUID, falls back to getRandomValues, then to
+  timestamp+random. randomUUID needs a current WebView and the A32's System
+  WebView version is not ours to choose.
+- Corrupt or foreign data in storage degrades to an empty library rather than
+  throwing: bad JSON, a non-array payload, and non-workout entries are all
+  dropped on read. Better an empty library than a screen that will not load.
+- Seed "Core 15": 5 exercises named "Exercise 1".."Exercise 5" (placeholders,
+  as the card specifies — real names come from the editor in Session E),
+  45s work, 15s rest, 3 loops, between-loop rest off. Seeds once only and
+  points last-used at it.
+- Tests: 42 passing across 4 files, up from 1. Covers save/load/update/delete,
+  ordering, id uniqueness, name trimming, last-used pointer behaviour
+  (including clearing it when its workout is deleted and falling back when it
+  is stale), seeding once only, reload persistence, corrupt payloads, the
+  validation matrix including the 5-second boundary exactly, and a full
+  round trip through WebKeyValueStore — the production path, which the
+  in-memory tests would otherwise have left unexercised.
+- MUTATION CHECKED, not just green: forcing saveWorkout to always append fails
+  the update-in-place test; removing the seedIfEmpty guard fails the
+  seed-once test; commenting out assertValidWorkout fails 3 validation tests.
+  Restored and re-verified clean afterwards.
+- Bundle unchanged at 219.60 kB — nothing imports src/storage yet, so it is
+  tree-shaken out. It appears in the bundle when Session E uses it.
+
+Next: Session E — the workout editor UI (Home list + editor screens).
