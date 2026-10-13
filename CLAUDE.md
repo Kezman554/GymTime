@@ -21,7 +21,7 @@ Use the npm scripts, not `cd android && gradlew ...` — the shell here is Power
 
 ## Device
 - Target is a **Samsung Galaxy A32 5G**, portrait only, APK sideloaded — no Play Store.
-- The vault records it at API 30 (Android 11); confirm the live version before setting `minSdk`.
+- Running **Android 13 / API 33** — confirmed on the handset 13 Oct 2026. Build targets `minSdk 24` / `targetSdk 36`, so the sideloaded APK installs regardless. *(The vault had recorded API 30 / Android 11 since DailySync's PRD; that figure was stale and is now corrected in `5-reference/hardware-and-software.md`, which is the single source for it.)*
 - `JAVA_HOME` already points at Android Studio's bundled JBR (OpenJDK 21) and is on PATH, so `gradlew` works from any terminal. No JDK setup needed.
 - Samsung's TTS engine may lack an en-GB voice, and Samsung battery optimisation is aggressive about backgrounded apps. Degrade gracefully rather than assuming either.
 
