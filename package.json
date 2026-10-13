@@ -1,7 +1,7 @@
 {
   "name": "gymtime",
   "private": true,
-  "version": "0.1.0",
+  "version": "1.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -10,7 +10,8 @@
     "android:sync": "npm run build && cap sync android",
     "android:apk": "npm run android:sync && android\\gradlew.bat -p android assembleDebug",
     "lint": "oxlint",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "assets": "node scripts/render-assets.cjs && capacitor-assets generate --android --iconBackgroundColor \"#0b0b0d\" --iconBackgroundColorDark \"#0b0b0d\" --splashBackgroundColor \"#0b0b0d\" --splashBackgroundColorDark \"#0b0b0d\""
   },
   "dependencies": {
     "@capacitor-community/keep-awake": "^8.0.1",
@@ -22,6 +23,7 @@
     "react-dom": "^19.2.8"
   },
   "devDependencies": {
+    "@capacitor/assets": "^3.0.5",
     "@capacitor/cli": "^8.5.3",
     "@types/node": "^24.13.3",
     "@types/react": "^19.2.18",

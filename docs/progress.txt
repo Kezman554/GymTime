@@ -315,3 +315,45 @@ Next: Session G — timer screen.
 - NOT done: listening by ear, and the browser run (no browser available to
   this session). Media volume on the phone is 2/15.
 - 102 tests passing (5 new), lint clean.
+
+2026-10-13 — Session K: icon, splash, v1.0.0
+- assets/stopwatch.svg is the single icon source: green #22c55e stopwatch
+  (crown, side button, case, elapsed sweep, hand) on #0b0b0d.
+  scripts/render-assets.cjs rasterises it with sharp into the PNG sources
+  @capacitor/assets wants (icon-only, icon-foreground, icon-background,
+  splash, splash-dark) plus public/favicon.svg (replaces Vite's).
+  `npm run assets` = render + `capacitor-assets generate --android` with
+  #0b0b0d icon and splash backgrounds. 74 resources generated: legacy and
+  round icons for mdpi..xxxhdpi, adaptive foreground/background layers, and
+  splash drawables for port/land, day/night.
+- Gotcha: @capacitor/assets wraps the adaptive foreground in a 16.7% inset,
+  so the foreground PNG must NOT be pre-shrunk for the safe zone (first
+  attempt at 0.6 scale would have come out ~40% too small). Rendered at the
+  legacy icon's 0.8 instead.
+- The generator also reformatted AndroidManifest.xml (whitespace only);
+  reverted so the diff stays honest. Portrait lock unaffected either way.
+- Dark launch: Android 12+ draws its own splash from the launch theme, so
+  styles.xml sets windowSplashScreenBackground and postSplashScreenTheme;
+  AppTheme.NoActionBar windowBackground and capacitor.config backgroundColor
+  are #0b0b0d too, so nothing flashes white before the page paints.
+  ic_launcher_background colour #FFFFFF -> #0B0B0D.
+- Version 1.0.0 in package.json and versionName in android/app/build.gradle
+  (versionCode stays 1: first release, debug-signed). Removed the unused
+  Vite public/icons.svg.
+- Verified: APK badging reports versionName 1.0.0 and the adaptive icon;
+  on the A32 the App info page shows the stopwatch and a cold launch shows
+  the dark splash with the stopwatch. 102 tests passing.
+
+INSTALLING GYMTIME ON THE PHONE
+  Build:  npm run android:apk
+          -> android/app/build/outputs/apk/debug/app-debug.apk (~4.9 MB)
+  Option A — USB (developer mode, USB debugging on):
+          adb install -r android/app/build/outputs/apk/debug/app-debug.apk
+          adb is at %LOCALAPPDATA%\Android\Sdk\platform-tools\adb.exe.
+          -r keeps saved workouts and settings when updating.
+  Option B — no cable: copy app-debug.apk to the phone (Google Drive,
+          email, USB file transfer), open it in My Files, and allow
+          "Install unknown apps" for that app when Android asks.
+  Then open GymTime from the app drawer. Updates install over the top; an
+  uninstall deletes saved workouts. The APK is debug-signed: fine for
+  sideloading, not for the Play Store.
