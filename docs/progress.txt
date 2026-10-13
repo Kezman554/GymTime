@@ -148,3 +148,39 @@ Next: Session E — the workout editor UI (Home list + editor screens).
   Bundle 233 kB JS / 72.8 kB gzip.
 
 Next: Session F — timer engine.
+
+2026-10-13 — Session F: timer engine
+- src/engine/sequence.ts: buildSegments(workout) -> flat Segment[]:
+  leadIn (5s), then work per exercise per loop, a rest after every work
+  except the very last, and at a loop boundary a 'loopRest' in place of the
+  rest when restBetweenLoopsSeconds > 0 — same rule as duration.ts, and a
+  test pins the two together. Segment = type, durationSeconds, exerciseName,
+  nextExerciseName, loop, totalLoops, exerciseIndex.
+- Naming convention: for work, exerciseName is the exercise being done and
+  nextExerciseName the next one worked (null at the very end). For leadIn
+  and rests both name the UPCOMING exercise, and loop/exerciseIndex refer to
+  it — so a rest before loop 2 reports loop 2. Built for "Rest. Next up: X".
+- src/engine/timer.ts: WorkoutTimer with start/pause/resume/stop,
+  getState() (status, segmentIndex, segment, secondsRemaining rounded up,
+  segmentProgress, progress, elapsedMs) and events segmentStart,
+  countdownTick(3|2|1), workoutComplete, plus 'tick' every wake-up for
+  redrawing. Elapsed = clock.now() - start, less pauses; segment ends are
+  precomputed integer ms. The interval (100ms default) only decides how often
+  the clock is read.
+- Injectable Clock { now, setInterval, clearInterval }; systemClock uses
+  performance.now. No React or Capacitor imports in src/engine.
+- Late wake-ups (throttled WebView): only the segment now current gets a
+  segmentStart, and a countdownTick only for the current second. Stale cues
+  are dropped, not burst. A throwing listener is logged and the clock goes on.
+- Tests: 83 passing (18 new). Covers the 5x45/15x3 sequence (14:45 + 5s
+  lead-in = 14:50), names/loops/indexes, between-loop rest, loop off,
+  event timing incl. 3-2-1 at exact ms, pause/resume, stop/restart, slept-
+  through cues, a throwing listener, and 15 simulated minutes with jittery
+  ticks and 1-1.5s stalls: every boundary fires late by < one wake, never
+  early, and elapsed ends at exactly 890000 ms.
+- MUTATION CHECKED: resume forgetting paused time (2 fail), a 1%-slow
+  tick-quantised clock (7 fail), final rest not skipped (12 fail), countdown
+  de-dupe removed (2 fail). Restored and re-verified.
+- No UI change, so nothing new on the phone this session.
+
+Next: Session G — timer screen.
