@@ -464,5 +464,18 @@ INSTALLING GYMTIME ON THE PHONE
   nothing, double-tap deletes nothing and pushes one entry, button order +
   Cancel focus, focus trap, Cancel / scrim / Back each keep the workout,
   confirm deletes the right one.
-- NOT verified on the phone: the A32 dropped off USB before install.
+- Verified ON THE A32 (unlocked; real touch input via devtools, real
+  Android Back via adb keyevent with GymTime checked in front first):
+  double-tap on Delete = first tap opens, second lands on Cancel (event
+  log shows pointerdown/click on .dialog__btn--primary); nothing deleted.
+  Geometry: footer Delete x243-344 y534-598, dialog Cancel x186-323
+  y541-597, dialog Delete x37-174. Scrim tap, Back, and Cancel each close
+  it with the workout kept; Back keeps GymTime in front, and one more Back
+  then minimises (no stale history entry). A throwaway "Delete Me" made in
+  the editor was deleted for real and stayed gone after force-stop and
+  relaunch. User's workouts untouched; Core 15 reselected.
+- Testing gotcha: a dialog opened by a scripted el.click() has no user
+  activation, so Chrome marks its pushState entry skippable and Android
+  Back minimises the app instead of closing the dialog. Real touches (CDP
+  Input.dispatchTouchEvent) behave correctly. Open it by touch in tests.
 - 112 tests passing, lint clean.
