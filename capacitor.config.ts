@@ -5,7 +5,7 @@ const config: CapacitorConfig = {
   appName: 'GymTime',
   webDir: 'dist',
   // WebView background before the page paints, so launch never flashes white.
-  backgroundColor: '#0b0b0d',
+  backgroundColor: '#15171a',
 };
 
 export default config;

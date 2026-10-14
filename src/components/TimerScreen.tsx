@@ -8,6 +8,7 @@ import { onReturnToForeground } from '../native/appState'
 import { getSpeech } from '../audio/speech'
 import { COMPLETE_CUE, segmentCue } from '../audio/cues'
 import { getBeeps } from '../audio/beeps'
+import { Dial } from './Dial'
 
 const PHASE_LABEL: Record<SegmentType, string> = {
   leadIn: 'Get ready',
@@ -19,6 +20,37 @@ const PHASE_LABEL: Record<SegmentType, string> = {
 /** Seconds on their own up to a minute; mm:ss above that. */
 function clockText(seconds: number): string {
   return seconds > 60 ? formatDuration(seconds) : String(seconds)
+}
+
+/** The longer labels drop a size so they never wrap at phone width. */
+const LONG_PHASE = new Set(['Get ready', 'Loop rest', 'Complete'])
+
+interface PhaseHeadProps {
+  label: string
+  loop?: { loop: number; totalLoops: number }
+  className?: string
+}
+
+/*
+ * "Loop 1 of 3" on one line beside a 60px PAUSED overflows 360px, so the loop
+ * count stacks a small LOOP label over "1/3" and aligns on its last baseline.
+ */
+function PhaseHead({ label, loop, className = '' }: PhaseHeadProps) {
+  return (
+    <div className="timer__head">
+      <p className={`timer__phase${LONG_PHASE.has(label) ? ' timer__phase--long' : ''} ${className}`}>
+        {label}
+      </p>
+      {loop && (
+        <p className="timer__meta">
+          <span className="timer__meta-label">Loop</span>
+          <span>
+            {loop.loop}/{loop.totalLoops}
+          </span>
+        </p>
+      )}
+    </div>
+  )
 }
 
 interface TimerScreenProps {
@@ -112,13 +144,17 @@ export function TimerScreen({ workout, settings, onDone, setBackInterceptor }: T
     return (
       <main className="timer timer--complete">
         <div className="timer__body">
-          <p className="timer__phase">Workout complete</p>
-          <h1 className="timer__exercise">{workout.name}</h1>
-          <p className="timer__total-label">Total time</p>
-          <p className="timer__total">{formatDuration(totalSeconds(segments))}</p>
-          {pausedSeconds > 0 && (
-            <p className="timer__meta">plus {formatDuration(pausedSeconds)} paused</p>
-          )}
+          <PhaseHead label="Complete" className="timer__phase--accent" />
+          <div className="timer__dial">
+            <Dial progress={1} complete />
+          </div>
+          <p className="timer__clock timer__clock--long">{formatDuration(totalSeconds(segments))}</p>
+          <div className="timer__below">
+            <h1 className="timer__exercise">{workout.name}</h1>
+            {pausedSeconds > 0 && (
+              <p className="timer__next">plus {formatDuration(pausedSeconds)} paused</p>
+            )}
+          </div>
         </div>
         <div className="timer__controls">
           <button type="button" className="btn timer__btn timer__btn--primary" onClick={onDone}>
@@ -133,6 +169,9 @@ export function TimerScreen({ workout, settings, onDone, setBackInterceptor }: T
   const seconds = state?.secondsRemaining ?? segment.durationSeconds
   const paused = status === 'paused'
   const isWork = segment.type === 'work'
+  // The accent belongs to work alone: phase word and arc, never while paused.
+  const working = isWork && !paused
+  const clock = clockText(seconds)
 
   const next = isWork
     ? segment.nextExerciseName === null
@@ -143,34 +182,31 @@ export function TimerScreen({ workout, settings, onDone, setBackInterceptor }: T
   return (
     <main className={`timer timer--${segment.type}${paused ? ' is-paused' : ''}`}>
       <div className="timer__body">
-        <div className="timer__top">
-          <p className="timer__phase">{paused ? 'Paused' : PHASE_LABEL[segment.type]}</p>
-          {segment.totalLoops > 1 && (
-            <p className="timer__meta">
-              Loop {segment.loop} of {segment.totalLoops}
-            </p>
-          )}
+        <PhaseHead
+          label={paused ? 'Paused' : PHASE_LABEL[segment.type]}
+          loop={segment.totalLoops > 1 ? segment : undefined}
+          className={working ? 'timer__phase--accent' : ''}
+        />
+
+        <div className="timer__dial">
+          <Dial progress={state?.segmentProgress ?? 0} active={working} />
         </div>
 
-        <p className="timer__clock" aria-live="off">
-          {clockText(seconds)}
+        <p className={`timer__clock${clock.length > 2 ? ' timer__clock--long' : ''}`} aria-live="off">
+          {clock}
+          {clock.length <= 2 && <span className="timer__unit">sec</span>}
         </p>
 
-        <div className="timer__progress" aria-hidden="true">
-          <div
-            className="timer__progress-fill"
-            style={{ transform: `scaleX(${state?.segmentProgress ?? 0})` }}
-          />
+        <div className={`timer__below${isWork ? '' : ' timer__below--muted'}`}>
+          {!isWork && <p className="timer__upnext">Up next</p>}
+          <h1 className="timer__exercise">{segment.exerciseName}</h1>
+          {next && <p className="timer__next">{next}</p>}
         </div>
-
-        {!isWork && <p className="timer__upnext">Up next</p>}
-        <h1 className="timer__exercise">{segment.exerciseName}</h1>
-        {next && <p className="timer__next">{next}</p>}
       </div>
 
       <div className="timer__controls">
         {confirmingStop ? (
-          <>
+          <div className="timer__confirm-block">
             <p className="timer__confirm">Stop this workout?</p>
             {/* Swapped from the row above, so a double-tap on Stop lands on Keep going. */}
             <div className="button-row">
@@ -192,7 +228,7 @@ export function TimerScreen({ workout, settings, onDone, setBackInterceptor }: T
                 Keep going
               </button>
             </div>
-          </>
+          </div>
         ) : (
           <div className="button-row">
             <button

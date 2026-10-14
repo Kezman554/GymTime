@@ -401,3 +401,34 @@ INSTALLING GYMTIME ON THE PHONE
   Settings persist across force-stop (wait ~15 s first: the WebView
   flushes localStorage lazily). Left on dark/orange, sound off as found.
 - 104 tests passing, lint clean.
+
+2026-10-14 — Timer as an instrument dial
+- src/components/Dial.tsx: 300x300 viewBox at 270px. Bezel r146 (1px ink),
+  guide r120 (1px hairline), 12 index marks r128-143 (3 at the quarters,
+  1.5 elsewhere), track r133 5px hairline, arc r133 5px rotated -90 with
+  dasharray against 836, needle centre to r120 with a 28 tail (4 ink), pin
+  r7 ground/3 ink. Reusable for the workout rows later.
+- TimerScreen: ground in every phase; linear bar removed. Phase word top
+  left (700, line-height 0.88, uppercase) over a 1px rule; 60px for WORK,
+  REST, PAUSED, 42px for GET READY, LOOP REST, COMPLETE. Accent only on the
+  word + arc during work (not paused), COMPLETE, and the primary button.
+  Seconds 120px tabular with a muted SEC label; mm:ss and the total drop to
+  88px. Exercise name 32px under a rule, muted outside work. Stop confirm:
+  danger rule + question, Stop (left, danger outline), Keep going (right,
+  accent fill). Complete: full ink arc, needle at twelve, total time.
+- Measured on the A32 (360px): "Loop 1 of 3" on one line beside a 60px
+  PAUSED (or 42px GET READY) overflows by ~30px, so the loop count is a
+  small LOOP label stacked over "1/3", aligned on the last baseline. All
+  six labels fit with a worst-case "10/10". Below 360px the words step
+  down to 52/36px; verified fitting at an emulated 320px.
+- All font-weight 800 -> 700 (only 400/500/700 are bundled).
+- Native window/splash background #0B0B0D -> #15171A (dark ground), also
+  capacitor.config backgroundColor and the assets script's splash flags
+  (splash PNGs for pre-Android-12 not regenerated). Known limitation: the
+  native layer can't read the WebView's localStorage theme before the page
+  loads, so light-mode users still see a brief dark splash.
+- Gotcha: "--" is illegal inside an XML comment; Gradle fails the build.
+- NOT verified on the phone: the real workout run (needle/arc through work,
+  rest, loop end), pause, stop confirm and completion. The A32 dropped off
+  USB as the run started. Nobody has done the two-metre work/rest check.
+- 104 tests passing, lint clean.

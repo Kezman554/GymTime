@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- The app's background, #0b0b0d in src/index.css. -->
-    <color name="gymtime_background">#0B0B0D</color>
+    <!-- The dark ground token in src/index.css. The native layer can't see the
+         stored theme before the page loads, so light-mode users get a brief dark
+         window/splash on launch. -->
+    <color name="gymtime_background">#15171A</color>
 </resources>
