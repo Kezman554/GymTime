@@ -277,10 +277,6 @@
 }
 
 .ratio-glyph__arc {
-  stroke: var(--ink);
-}
-
-.workout-item.is-selected .ratio-glyph__arc {
   stroke: var(--accent);
 }
 
@@ -322,7 +318,8 @@
   border: 0;
   border-radius: var(--radius);
   background: transparent;
-  color: var(--ink);
+  /* The same soft grey as the round + and cog icons. */
+  color: color-mix(in srgb, var(--hairline), var(--muted));
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
 }
@@ -348,6 +345,10 @@
   cursor: pointer;
   touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
+}
+
+.home__header .screen__title {
+  color: var(--accent);
 }
 
 .home__header {
@@ -887,6 +888,16 @@
 
 .dial__arc--complete {
   stroke: var(--ink);
+}
+
+/* Work: a translucent wedge fills the inner circle from twelve to the needle. */
+.dial__wedge {
+  fill: var(--accent);
+  fill-opacity: 0.16;
+}
+
+.dial__wedge--paused {
+  fill: var(--muted);
 }
 
 .dial__needle {

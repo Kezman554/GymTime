@@ -18,10 +18,23 @@ interface DialProps {
   active?: boolean
   /** A full, unbroken arc in ink with the needle at twelve. */
   complete?: boolean
+  /** Fill the inner circle with a wedge that grows behind the needle (work). */
+  wedge?: boolean
   size?: number
 }
 
-export function Dial({ progress, active = false, complete = false, size = 270 }: DialProps) {
+const WEDGE_R = 120
+
+/** The sector from twelve o'clock, clockwise, covering fraction p of the inner circle. */
+function wedgePath(p: number): string {
+  const a = p * 2 * Math.PI
+  const x = C + WEDGE_R * Math.sin(a)
+  const y = C - WEDGE_R * Math.cos(a)
+  const large = p > 0.5 ? 1 : 0
+  return `M${C} ${C} L${C} ${C - WEDGE_R} A${WEDGE_R} ${WEDGE_R} 0 ${large} 1 ${x.toFixed(2)} ${y.toFixed(2)} Z`
+}
+
+export function Dial({ progress, active = false, complete = false, wedge = false, size = 270 }: DialProps) {
   const p = complete ? 1 : Math.min(1, Math.max(0, progress))
   const needleDeg = complete ? 0 : p * 360
   const arcClass = complete ? 'dial__arc dial__arc--complete' : active ? 'dial__arc dial__arc--active' : 'dial__arc'
@@ -30,6 +43,14 @@ export function Dial({ progress, active = false, complete = false, size = 270 }:
     <svg className="dial" viewBox="0 0 300 300" width={size} height={size} aria-hidden="true">
       <circle className="dial__bezel" cx={C} cy={C} r={146} vectorEffect="non-scaling-stroke" />
       <circle className="dial__guide" cx={C} cy={C} r={120} vectorEffect="non-scaling-stroke" />
+      {wedge &&
+        p > 0 &&
+        // A full turn can't be drawn as one arc, so the last sliver becomes a circle.
+        (p >= 0.999 ? (
+          <circle className={`dial__wedge${active ? '' : ' dial__wedge--paused'}`} cx={C} cy={C} r={WEDGE_R} />
+        ) : (
+          <path className={`dial__wedge${active ? '' : ' dial__wedge--paused'}`} d={wedgePath(p)} />
+        ))}
       {MARKS.map((deg) => (
         <line
           key={deg}

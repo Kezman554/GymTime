@@ -189,7 +189,7 @@ export function TimerScreen({ workout, settings, onDone, setBackInterceptor }: T
         />
 
         <div className="timer__dial">
-          <Dial progress={state?.segmentProgress ?? 0} active={working} />
+          <Dial progress={state?.segmentProgress ?? 0} active={working} wedge={isWork} />
         </div>
 
         <p className={`timer__clock${clock.length > 2 ? ' timer__clock--long' : ''}`} aria-live="off">

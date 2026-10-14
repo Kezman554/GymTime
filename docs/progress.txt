@@ -765,3 +765,20 @@ INSTALLING GYMTIME ON THE PHONE
 - Spec line worst case, ON THE A32 across all six accents (six-workout
   library swapped from a backup and restored byte-identical): light 6.76:1
   (Mono), dark 6.36:1 (Mono); calculated 6.79 / 6.30.
+
+2026-10-14 — Accent title and arcs, grey pencil, work wedge
+- Home: "GymTime" title in the accent; every row's ratio-dial arc in the
+  accent (was ink except the selected row), so selection is carried by the
+  frame and tint alone. Edit pencil in the same hairline/muted mix as the
+  round + and cog — note 2.47-2.66:1 against the selected tint in light,
+  2.71-3.14:1 in dark (the tint is darker than the plain ground).
+- Timer dial: during a work segment a translucent wedge (accent, fill-
+  opacity 0.16) fills the inner circle (r=120) from twelve to the needle,
+  growing into a full pie (drawn as a circle at the last sliver). Muted
+  while paused, matching the arc; none in get ready / rest / loop rest or
+  on the complete dial. Dial gets a `wedge` prop; TimerScreen passes
+  isWork.
+- Verified ON THE A32, dark and light/orange, Test 3x10 with sound off
+  for the run: wedge edge lands on the needle (119 and 259 deg), none in
+  rest, muted when paused; title, arcs and pencil colours as above.
+  Settings/selection restored byte-identical from a backup afterwards.
