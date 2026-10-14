@@ -561,3 +561,23 @@ INSTALLING GYMTIME ON THE PHONE
   button text measured in-page, all as above. Dark mode: every token
   unchanged, orange 5.55 / on-accent 5.83 as before. Left on light/sky,
   Core 15 selected.
+
+2026-10-14 — Home restyle: ruled rows with ratio dials
+- Workout cards -> hairline-ruled rows. Every row has a 4px left border,
+  transparent unless selected (accent + 10% accent tint), so text stays at
+  x=86 either way. 42px RatioGlyph (viewBox 42, r16, 3.5 stroke): hairline
+  track + arc of work/(work+rest) against 101, accent when selected, ink
+  otherwise. One quiet caption under the list ("Dial: share of each round
+  spent working"), linked by aria-describedby.
+- Chapter-ring strip under the title: 7px repeating 1px ink ticks every
+  8px on a 1px ink rule. Names uppercase 700 (brief said 600; only
+  400/500/700 are bundled and 600 would silently render 700). Spec line
+  11px 400 with 0.12em tracking. New/Edit/Delete: ink outlines; Start
+  unchanged (accent fill).
+- Brief asked to keep the two-tap "Sure?" Delete; it was already replaced
+  by the confirmation dialog (891bf40), so the dialog stays.
+- Verified ON THE A32: arcs 75.75/101 (Core 15, 45/15) and 67.33/101
+  (Test 3x10, 10/5); selection moves bar/tint/arc with no shift; Delete
+  opens the dialog, Cancel keeps both. Light/sky, light/mono (selection
+  still obvious from bar + tint) and dark/orange checked. Left light/sky,
+  Core 15 selected. 112 tests passing, lint clean.

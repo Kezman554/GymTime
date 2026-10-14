@@ -16,6 +16,27 @@ interface HomeScreenProps {
   setBackInterceptor: (intercept: (() => boolean) | null) => void
 }
 
+/** 2π × 16, rounded: the dash length of a full glyph arc. */
+const GLYPH_CIRCUMFERENCE = 101
+
+/** A small dial: the arc is the share of each work + rest round spent working. */
+function RatioGlyph({ workout }: { workout: Workout }) {
+  const work = workout.workSeconds / (workout.workSeconds + workout.restSeconds)
+  return (
+    <svg className="ratio-glyph" viewBox="0 0 42 42" width="42" height="42" aria-hidden="true">
+      <circle className="ratio-glyph__track" cx="21" cy="21" r="16" />
+      <circle
+        className="ratio-glyph__arc"
+        cx="21"
+        cy="21"
+        r="16"
+        strokeDasharray={`${work * GLYPH_CIRCUMFERENCE} ${GLYPH_CIRCUMFERENCE}`}
+        transform="rotate(-90 21 21)"
+      />
+    </svg>
+  )
+}
+
 function summary(workout: Workout): string {
   const loops = workout.loopEnabled ? workout.loops : 1
   const total = formatDuration(
@@ -87,26 +108,35 @@ export function HomeScreen({
           </svg>
         </button>
       </header>
+      <div className="chapter-ring" aria-hidden="true" inert={confirming} />
 
       {workouts.length === 0 ? (
         <p className="empty">No workouts yet. Tap New to make one.</p>
       ) : (
-        <ul className="workout-list" role="listbox" aria-label="Saved workouts" inert={confirming}>
-          {workouts.map((workout) => (
-            <li key={workout.id}>
-              <button
-                type="button"
-                role="option"
-                aria-selected={workout.id === selectedId}
-                className={`workout-card${workout.id === selectedId ? ' is-selected' : ''}`}
-                onClick={() => onSelect(workout.id)}
-              >
-                <span className="workout-card__name">{workout.name}</span>
-                <span className="workout-card__summary">{summary(workout)}</span>
-              </button>
-            </li>
-          ))}
-        </ul>
+        <div className="workouts" inert={confirming}>
+          <ul className="workout-list" role="listbox" aria-label="Saved workouts" aria-describedby="dial-caption">
+            {workouts.map((workout) => (
+              <li key={workout.id}>
+                <button
+                  type="button"
+                  role="option"
+                  aria-selected={workout.id === selectedId}
+                  className={`workout-row${workout.id === selectedId ? ' is-selected' : ''}`}
+                  onClick={() => onSelect(workout.id)}
+                >
+                  <RatioGlyph workout={workout} />
+                  <span className="workout-row__text">
+                    <span className="workout-row__name">{workout.name}</span>
+                    <span className="workout-row__spec">{summary(workout)}</span>
+                  </span>
+                </button>
+              </li>
+            ))}
+          </ul>
+          <p id="dial-caption" className="workouts__caption">
+            Dial: share of each round spent working
+          </p>
+        </div>
       )}
 
       <div className="home__footer" inert={confirming}>
