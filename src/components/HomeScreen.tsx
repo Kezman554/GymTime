@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import type { Settings, Workout } from '../storage'
+import type { Workout } from '../storage'
 import { formatDuration, workoutDurationSeconds } from '../engine/duration'
 
 interface HomeScreenProps {
@@ -10,14 +10,8 @@ interface HomeScreenProps {
   onEdit: (workout: Workout) => void
   onDelete: (workout: Workout) => void
   onStart: (workout: Workout) => void
-  settings: Settings
-  onSettingsChange: (settings: Settings) => void
+  onOpenSettings: () => void
 }
-
-const SOUND_OPTIONS: { key: 'speech' | 'beeps'; label: string }[] = [
-  { key: 'speech', label: 'Speech' },
-  { key: 'beeps', label: 'Beeps' },
-]
 
 function summary(workout: Workout): string {
   const loops = workout.loopEnabled ? workout.loops : 1
@@ -35,8 +29,7 @@ export function HomeScreen({
   onEdit,
   onDelete,
   onStart,
-  settings,
-  onSettingsChange,
+  onOpenSettings,
 }: HomeScreenProps) {
   const selected = workouts.find((workout) => workout.id === selectedId) ?? null
   // Delete takes two taps: the first arms it for the selected workout, the second deletes.
@@ -45,8 +38,24 @@ export function HomeScreen({
 
   return (
     <main className="screen home">
-      <header className="screen__header">
+      <header className="screen__header home__header">
         <h1 className="screen__title">GymTime</h1>
+        <button type="button" className="btn btn--icon" aria-label="Settings" onClick={onOpenSettings}>
+          <svg
+            className="icon"
+            viewBox="0 0 24 24"
+            width="28"
+            height="28"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.75"
+            strokeLinecap="square"
+            aria-hidden="true"
+          >
+            <path d="M3 6h18M3 12h18M3 18h18" />
+            <path d="M8 3.5v5M16 9.5v5M10 15.5v5" fill="none" />
+          </svg>
+        </button>
       </header>
 
       {workouts.length === 0 ? (
@@ -71,20 +80,6 @@ export function HomeScreen({
       )}
 
       <div className="home__footer">
-        <div className="button-row sound-toggles" role="group" aria-label="Sound">
-          {SOUND_OPTIONS.map(({ key, label }) => (
-            <button
-              key={key}
-              type="button"
-              role="switch"
-              aria-checked={settings[key]}
-              className={`toggle sound-toggle${settings[key] ? ' toggle--on' : ''}`}
-              onClick={() => onSettingsChange({ ...settings, [key]: !settings[key] })}
-            >
-              {label}: {settings[key] ? 'On' : 'Off'}
-            </button>
-          ))}
-        </div>
         <div className="button-row button-row--three">
           <button type="button" className="btn btn--large" onClick={onNew}>
             New

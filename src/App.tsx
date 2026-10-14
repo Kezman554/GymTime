@@ -11,6 +11,7 @@ import {
 import { HomeScreen } from './components/HomeScreen'
 import { EditorScreen } from './components/EditorScreen'
 import { TimerScreen } from './components/TimerScreen'
+import { SettingsScreen } from './components/SettingsScreen'
 import { DEFAULT_WORKOUT } from './components/draft'
 import { getBeeps } from './audio/beeps'
 import { applyAppearance } from './appearance'
@@ -27,12 +28,16 @@ type Screen =
   | { kind: 'home' }
   | { kind: 'editor'; initial: NewWorkout | Workout }
   | { kind: 'timer'; workout: Workout }
+  | { kind: 'settings' }
 
 function App() {
   const [screen, setScreen] = useState<Screen>({ kind: 'home' })
   const [workouts, setWorkouts] = useState<Workout[] | null>(null)
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const [settings, setSettings] = useState<Settings>(DEFAULT_SETTINGS)
+  // Changes merge onto the latest settings, not the last render's, so two
+  // quick changes never undo each other.
+  const settingsRef = useRef(settings)
 
   const refresh = useCallback(async () => {
     const list = await store.listWorkouts()
@@ -51,6 +56,7 @@ function App() {
       ])
       if (cancelled) return
       setSelectedId(lastUsed?.id ?? null)
+      settingsRef.current = savedSettings
       setSettings(savedSettings)
       applyAppearance(savedSettings)
     })()
@@ -102,7 +108,9 @@ function App() {
     backToHome()
   }
 
-  const changeSettings = (next: Settings) => {
+  const changeSettings = (change: Partial<Settings>) => {
+    const next = { ...settingsRef.current, ...change }
+    settingsRef.current = next
     setSettings(next)
     applyAppearance(next)
     void settingsStore.save(next)
@@ -122,6 +130,8 @@ function App() {
   switch (screen.kind) {
     case 'editor':
       return <EditorScreen initial={screen.initial} onSave={save} onCancel={backToHome} />
+    case 'settings':
+      return <SettingsScreen settings={settings} onChange={changeSettings} onDone={backToHome} />
     case 'timer':
       return (
         <TimerScreen
@@ -140,8 +150,7 @@ function App() {
           onNew={() => open({ kind: 'editor', initial: { ...DEFAULT_WORKOUT } })}
           onEdit={(workout) => open({ kind: 'editor', initial: workout })}
           onDelete={(workout) => void remove(workout)}
-          settings={settings}
-          onSettingsChange={changeSettings}
+          onOpenSettings={() => open({ kind: 'settings' })}
           onStart={(workout) => {
             // Inside the tap, so the browser/WebView lets audio start.
             getBeeps().unlock()

@@ -378,6 +378,26 @@ INSTALLING GYMTIME ON THE PHONE
   first paint (reads gymtime.settings from localStorage directly);
   src/appearance.ts re-applies after load and on change and points the
   theme-color meta at --ground.
-- NOT done: there is no picker UI yet, so theme/accent can only be changed
-  through storage or devtools. Not tested in a browser or on the A32.
-- 107 tests passing (3 new), lint clean, build clean.
+- Verified on the A32 afterwards (devtools attribute switching on every
+  screen, and persistence across force-stop; see the next entry).
+- 104 tests passing (2 new), lint clean, build clean.
+
+2026-10-14 — Settings screen
+- src/components/SettingsScreen.tsx: Appearance (Light/Dark radiogroup,
+  selected filled with ink), Accent (six swatches as a radiogroup with
+  aria-label names; fill is var(--accent-<key>), so it shows the current
+  mode's value; selected = 3px ink border with a ground gap inside so Mono
+  still reads), Sound (Speech/Beeps switches, moved from Home). Sections
+  divided by hairline rules, tracked uppercase labels, Done returns Home.
+- Home: sound switches removed; a sliders icon button (inline stroke SVG,
+  aria-label "Settings") sits beside the title. Android back also returns.
+- .toggle is now square (also affects the editor's loop toggle).
+- Fix: onChange now passes only the changed field, merged in App onto a
+  ref of the latest settings. Two changes in the same tick (Dark, then
+  Orange) used to save the stale theme over the new one.
+- Verified ON THE A32 via WebView devtools (in-page clicks, no adb taps):
+  Light and Sky restyle the settings screen within 50 ms; Home and the work
+  phase of the timer then use sky. Targets: swatches 48x48, others 56 tall.
+  Settings persist across force-stop (wait ~15 s first: the WebView
+  flushes localStorage lazily). Left on dark/orange, sound off as found.
+- 104 tests passing, lint clean.
