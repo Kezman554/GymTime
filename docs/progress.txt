@@ -679,4 +679,9 @@ INSTALLING GYMTIME ON THE PHONE
   Android 12+ draws the cold-start splash from windowSplashScreenBackground
   (#15171A) plus this launcher icon, so icon and splash match by
   construction; the splash PNGs are for older Android.
-- NOT yet verified on the phone (A32 off USB after install).
+- Verified ON THE A32 (system keys and intents only, no taps): the
+  launcher (Minimalist Launcher) is text-only, so no icon to check there.
+  Cold start caught at ~0.15 s: orange stopwatch centred on (21,23,26),
+  then fading. App switcher and Settings > App info both show the orange
+  stopwatch on the dark ground inside Samsung's squircle mask, glyph well
+  clear of the edge. Returned to GymTime afterwards.
