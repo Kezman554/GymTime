@@ -41,3 +41,48 @@ Use the npm scripts, not `cd android && gradlew ...` — the shell here is Power
 - Requirements: docs/gymtime_PRD.md
 - Progress log: docs/progress.txt
 - Task prompts: Kanban app
+
+## Design
+
+The UI has a settled visual language. Tokens live in `src/index.css` as CSS
+custom properties — read the values there, not here.
+
+**Typeface:** Archivo only, bundled via `@fontsource/archivo` at weights 400,
+500 and 700. No remote font requests: the app must render correctly with no
+network. There is no second typeface — weight, size and letter-spacing carry
+all the differentiation.
+
+**Modes:** light and dark are modes of each other, selected by `data-theme` on
+the document element. Neither is a variant of the other; both are complete.
+
+**Accent:** user-chosen from six named accents, selected by `data-accent`.
+Each accent is defined **twice** — one value for the light ground, one for the
+dark — because a single value cannot clear 4.5:1 on both. When adding or
+changing an accent, both values are required and both must be measured.
+
+**Danger is a separate token, never the accent.** A user can select Red as
+their accent, so red alone cannot mean "destructive". Destructive actions are
+signalled by their wording and by treatment — a question, a rule, an outline —
+with colour only reinforcing. Never let red be the sole signal.
+
+**Geometry:**
+- Corner radius is 0. There are no rounded corners anywhere, including
+  progress bars and buttons.
+- Borders are 1px.
+- Lists and groups are separated by hairline rules. **No cards** — no raised
+  surfaces, no tinted panels standing in for structure. The card stack is the
+  look this design replaced.
+- Text inputs are bottom-ruled: a 1px bottom border and nothing else.
+- Touch targets are at least 44px.
+
+**The dial is the app's signature.** The timer and the workout rows both use a
+drawn instrument dial rather than a bar. Geometry is in the components; the
+rule is that progress is circular and mechanical, with a needle and a bezel,
+not a linear bar.
+
+**Icons** are inline stroke SVG, marked `aria-hidden`, with the accessible
+label on the button. Never emoji, never glyph characters like ▲ ▼ ✕.
+
+**No Tailwind, and no Tailwind-derived defaults.** Specifically: not the zinc
+ramp, not `green-500`, not a 14px radius. If a colour is needed that no token
+covers, add a token for it in both modes rather than writing a literal.
