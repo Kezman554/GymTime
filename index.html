@@ -1,11 +1,22 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="dark" data-accent="orange">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <meta name="theme-color" content="#0b0b0d" />
+    <meta name="theme-color" content="#15171A" />
     <title>GymTime</title>
+    <script>
+      // Apply the saved mode and accent before first paint, so the app never
+      // shows the default theme and then switches. Mirrors SettingsStore.load:
+      // anything missing or unknown keeps the default already on <html>.
+      try {
+        var saved = JSON.parse(localStorage.getItem('gymtime.settings') || '{}') || {}
+        var root = document.documentElement
+        if (saved.theme === 'light' || saved.theme === 'dark') root.dataset.theme = saved.theme
+        if (['red', 'orange', 'sky', 'green', 'brass', 'mono'].indexOf(saved.accent) >= 0) root.dataset.accent = saved.accent
+      } catch (e) {}
+    </script>
   </head>
   <body>
     <div id="root"></div>

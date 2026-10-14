@@ -13,6 +13,7 @@ import { EditorScreen } from './components/EditorScreen'
 import { TimerScreen } from './components/TimerScreen'
 import { DEFAULT_WORKOUT } from './components/draft'
 import { getBeeps } from './audio/beeps'
+import { applyAppearance } from './appearance'
 
 const store = new WorkoutStore()
 const settingsStore = new SettingsStore()
@@ -51,6 +52,7 @@ function App() {
       if (cancelled) return
       setSelectedId(lastUsed?.id ?? null)
       setSettings(savedSettings)
+      applyAppearance(savedSettings)
     })()
     return () => {
       cancelled = true
@@ -102,6 +104,7 @@ function App() {
 
   const changeSettings = (next: Settings) => {
     setSettings(next)
+    applyAppearance(next)
     void settingsStore.save(next)
   }
 

@@ -357,3 +357,27 @@ INSTALLING GYMTIME ON THE PHONE
   Then open GymTime from the app drawer. Updates install over the top; an
   uninstall deletes saved workouts. The APK is debug-signed: fine for
   sideloading, not for the Play Store.
+
+2026-10-14 — Design tokens, Archivo, theme and accent settings
+- @fontsource/archivo 400/500/700 imported in main.tsx; the woff2/woff
+  files are bundled into dist/assets. No remote font requests.
+- src/index.css holds role tokens (ground, ink, muted, rule, hairline,
+  track, on-accent, danger) for data-theme light|dark, and six accents
+  (red, orange, sky, green, brass, mono) for data-accent, each with a
+  light-ground and dark-ground value. All measured: every accent >= 4.80:1
+  on its ground, on-accent >= 5.12:1 on every accent, danger 5.47 / 4.87.
+  No attributes = dark + orange. --radius 0; button borders 1px.
+- App.css's own palette block is gone; every colour now reads a token.
+  Old surfaces map to ground, so the tinted card/button fills disappeared
+  as a side effect. The timer's hard-coded phase colours became tokens:
+  work fills with the accent (on-accent text), every other phase and
+  paused sit on the ground. Armed Delete fills with danger.
+- Settings gains theme + accent (default dark/orange), validated field by
+  field like speech/beeps; older saved settings keep their sound choices.
+- index.html applies the saved attributes in an inline script before
+  first paint (reads gymtime.settings from localStorage directly);
+  src/appearance.ts re-applies after load and on change and points the
+  theme-color meta at --ground.
+- NOT done: there is no picker UI yet, so theme/accent can only be changed
+  through storage or devtools. Not tested in a browser or on the A32.
+- 107 tests passing (3 new), lint clean, build clean.

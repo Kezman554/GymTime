@@ -1,13 +1,17 @@
 import { createDefaultStore, type KeyValueStore } from './keyValueStore'
+import { ACCENTS, THEMES, type Accent, type Theme } from './types'
 
-const SETTINGS_KEY = 'gymtime.settings'
+/** index.html reads this key directly to set the theme before first paint. */
+export const SETTINGS_KEY = 'gymtime.settings'
 
 export interface Settings {
   speech: boolean
   beeps: boolean
+  theme: Theme
+  accent: Accent
 }
 
-export const DEFAULT_SETTINGS: Settings = { speech: true, beeps: true }
+export const DEFAULT_SETTINGS: Settings = { speech: true, beeps: true, theme: 'dark', accent: 'orange' }
 
 export class SettingsStore {
   private readonly store: KeyValueStore
@@ -30,6 +34,8 @@ export class SettingsStore {
     return {
       speech: typeof candidate.speech === 'boolean' ? candidate.speech : DEFAULT_SETTINGS.speech,
       beeps: typeof candidate.beeps === 'boolean' ? candidate.beeps : DEFAULT_SETTINGS.beeps,
+      theme: THEMES.includes(candidate.theme as Theme) ? (candidate.theme as Theme) : DEFAULT_SETTINGS.theme,
+      accent: ACCENTS.includes(candidate.accent as Accent) ? (candidate.accent as Accent) : DEFAULT_SETTINGS.accent,
     }
   }
 

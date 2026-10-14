@@ -14,7 +14,7 @@ interface HomeScreenProps {
   onSettingsChange: (settings: Settings) => void
 }
 
-const SOUND_OPTIONS: { key: keyof Settings; label: string }[] = [
+const SOUND_OPTIONS: { key: 'speech' | 'beeps'; label: string }[] = [
   { key: 'speech', label: 'Speech' },
   { key: 'beeps', label: 'Beeps' },
 ]

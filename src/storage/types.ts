@@ -17,6 +17,13 @@ export interface Workout {
 /** Everything but the id — what the editor hands over for a new workout. */
 export type NewWorkout = Omit<Workout, 'id'>
 
+export const THEMES = ['light', 'dark'] as const
+export type Theme = (typeof THEMES)[number]
+
+/** Accent keys, as carried by data-accent. Colours are in index.css. */
+export const ACCENTS = ['red', 'orange', 'sky', 'green', 'brass', 'mono'] as const
+export type Accent = (typeof ACCENTS)[number]
+
 export const MIN_SECONDS = 5
 export const MIN_LOOPS = 1
 

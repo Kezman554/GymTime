@@ -1,8 +1,64 @@
-:root {
-  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+/*
+ * Design tokens. Two complete modes, chosen by data-theme on <html>, and six
+ * accents chosen by data-accent. Every accent has a light-ground and a
+ * dark-ground value; each clears 4.5:1 against its own ground.
+ * Dark + orange is the default, so it also applies with no attributes set.
+ */
+
+:root,
+:root[data-theme='dark'] {
   color-scheme: dark;
-  color: #f4f4f5;
-  background-color: #0b0b0d;
+  --ground: #15171a;
+  --ink: #e4e7ea;
+  --muted: #9aa3ab;
+  --rule: #4a525a;
+  --hairline: #343a40;
+  --track: #343a40;
+  --on-accent: #0a1218;
+  --danger: #e8504f;
+
+  --accent-red: #e8504f;
+  --accent-orange: #e8692e;
+  --accent-sky: #4fb3e8;
+  --accent-green: #5fbf6a;
+  --accent-brass: #d9a738;
+  --accent-mono: #e4e7ea;
+}
+
+:root[data-theme='light'] {
+  color-scheme: light;
+  --ground: #e9e5dc;
+  --ink: #17160f;
+  --muted: #4a463a;
+  --rule: #17160f;
+  --hairline: #c9c2b2;
+  --track: #c9c2b2;
+  --on-accent: #f6f3ec;
+  --danger: #ae2318;
+
+  --accent-red: #ae2318;
+  --accent-orange: #a8431a;
+  --accent-sky: #0b5e93;
+  --accent-green: #2f5d34;
+  --accent-brass: #7a5a14;
+  --accent-mono: #17160f;
+}
+
+:root,
+:root[data-accent='orange'] { --accent: var(--accent-orange); }
+:root[data-accent='red'] { --accent: var(--accent-red); }
+:root[data-accent='sky'] { --accent: var(--accent-sky); }
+:root[data-accent='green'] { --accent: var(--accent-green); }
+:root[data-accent='brass'] { --accent: var(--accent-brass); }
+:root[data-accent='mono'] { --accent: var(--accent-mono); }
+
+:root {
+  --radius: 0;
+  --target: 56px;
+
+  font-family: 'Archivo', sans-serif;
+  color: var(--ink);
+  background-color: var(--ground);
 }
 
 * {
@@ -12,6 +68,6 @@
 body {
   margin: 0;
   min-height: 100dvh;
-  background-color: #0b0b0d;
+  background-color: var(--ground);
   -webkit-font-smoothing: antialiased;
 }

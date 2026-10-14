@@ -1,18 +1,4 @@
-/* Dark, high-contrast, portrait. Targets are at least 56px tall for sweaty thumbs. */
-:root {
-  --bg: #0b0b0d;
-  --surface: #18181b;
-  --surface-raised: #27272a;
-  --border: #3f3f46;
-  --text: #f4f4f5;
-  --text-dim: #a1a1aa;
-  --accent: #22c55e;
-  --accent-text: #052e12;
-  --danger: #f87171;
-  --danger-bg: #450a0a;
-  --target: 56px;
-  --radius: 14px;
-}
+/* Portrait, glanceable. Targets are at least 56px tall for sweaty thumbs. Tokens are in index.css. */
 
 .screen {
   min-height: 100dvh;
@@ -39,7 +25,7 @@
 .empty {
   margin: 0;
   font-size: 1.25rem;
-  color: var(--text-dim);
+  color: var(--muted);
 }
 
 /* Buttons */
@@ -48,10 +34,10 @@
   min-height: var(--target);
   min-width: var(--target);
   padding: 0 1rem;
-  border: 2px solid var(--border);
+  border: 1px solid var(--rule);
   border-radius: var(--radius);
-  background: var(--surface-raised);
-  color: var(--text);
+  background: var(--ground);
+  color: var(--ink);
   font: inherit;
   font-size: 1.25rem;
   font-weight: 700;
@@ -90,7 +76,7 @@
 .btn--primary {
   background: var(--accent);
   border-color: var(--accent);
-  color: var(--accent-text);
+  color: var(--on-accent);
 }
 
 .btn--danger {
@@ -98,8 +84,9 @@
 }
 
 .btn--danger.is-armed {
-  background: var(--danger-bg);
+  background: var(--danger);
   border-color: var(--danger);
+  color: var(--on-accent);
 }
 
 .btn--icon {
@@ -112,7 +99,7 @@
   min-height: 96px;
   border-color: var(--accent);
   background: var(--accent);
-  color: var(--accent-text);
+  color: var(--on-accent);
   font-size: 2.5rem;
   font-weight: 800;
   letter-spacing: 0.02em;
@@ -143,10 +130,10 @@
   justify-content: center;
   gap: 0.25rem;
   padding: 0.75rem 1rem;
-  border: 3px solid var(--border);
+  border: 3px solid var(--rule);
   border-radius: var(--radius);
-  background: var(--surface);
-  color: var(--text);
+  background: var(--ground);
+  color: var(--ink);
   font: inherit;
   text-align: left;
   cursor: pointer;
@@ -155,7 +142,6 @@
 
 .workout-card.is-selected {
   border-color: var(--accent);
-  background: #0f2a18;
 }
 
 .workout-card__name {
@@ -166,7 +152,7 @@
 
 .workout-card__summary {
   font-size: 1.0625rem;
-  color: var(--text-dim);
+  color: var(--muted);
 }
 
 .home__footer,
@@ -183,7 +169,7 @@
   position: sticky;
   bottom: 0;
   padding: 0.75rem 0 max(0.25rem, env(safe-area-inset-bottom));
-  background: linear-gradient(to bottom, transparent, var(--bg) 0.75rem);
+  background: linear-gradient(to bottom, transparent, var(--ground) 0.75rem);
 }
 
 /* Editor */
@@ -198,17 +184,17 @@
   margin: 0;
   font-size: 1.125rem;
   font-weight: 700;
-  color: var(--text-dim);
+  color: var(--muted);
 }
 
 .text-input {
   width: 100%;
   min-height: var(--target);
   padding: 0 0.875rem;
-  border: 2px solid var(--border);
+  border: 2px solid var(--rule);
   border-radius: var(--radius);
-  background: var(--surface);
-  color: var(--text);
+  background: var(--ground);
+  color: var(--ink);
   font: inherit;
   font-size: 1.25rem;
 }
@@ -237,7 +223,7 @@
   text-align: right;
   font-size: 1.125rem;
   font-weight: 700;
-  color: var(--text-dim);
+  color: var(--muted);
 }
 
 .exercise-row__name {
@@ -271,7 +257,7 @@
 .stepper__label {
   font-size: 1.125rem;
   font-weight: 700;
-  color: var(--text-dim);
+  color: var(--muted);
 }
 
 .stepper__row {
@@ -295,10 +281,10 @@
 .stepper__input {
   width: 100%;
   min-height: var(--target);
-  border: 2px solid var(--border);
+  border: 2px solid var(--rule);
   border-radius: var(--radius);
-  background: var(--surface);
-  color: var(--text);
+  background: var(--ground);
+  color: var(--ink);
   font: inherit;
   font-size: 1.75rem;
   font-weight: 800;
@@ -312,7 +298,7 @@
   top: 50%;
   transform: translateY(-50%);
   font-size: 1.25rem;
-  color: var(--text-dim);
+  color: var(--muted);
   pointer-events: none;
 }
 
@@ -326,10 +312,10 @@
 .toggle {
   min-width: 112px;
   min-height: var(--target);
-  border: 2px solid var(--border);
+  border: 1px solid var(--rule);
   border-radius: 999px;
-  background: var(--surface-raised);
-  color: var(--text-dim);
+  background: var(--ground);
+  color: var(--muted);
   font: inherit;
   font-size: 1.25rem;
   font-weight: 800;
@@ -344,14 +330,14 @@
 
 /* Outlined rather than filled when on, so Start stays the loudest thing on Home. */
 .sound-toggle.toggle--on {
-  background: var(--surface);
+  background: var(--ground);
   color: var(--accent);
 }
 
 .toggle--on {
   border-color: var(--accent);
   background: var(--accent);
-  color: var(--accent-text);
+  color: var(--on-accent);
 }
 
 .total {
@@ -364,7 +350,7 @@
 .total__label {
   font-size: 1.25rem;
   font-weight: 700;
-  color: var(--text-dim);
+  color: var(--muted);
 }
 
 .total__value {
@@ -378,32 +364,30 @@
   padding: 0.75rem 1rem 0.75rem 2rem;
   border: 2px solid var(--danger);
   border-radius: var(--radius);
-  background: var(--danger-bg);
-  color: #fecaca;
+  background: var(--ground);
+  color: var(--ink);
   font-size: 1.0625rem;
   line-height: 1.4;
 }
 
-/* Timer: full-bleed phase colour, readable from across the room */
+/* Timer: work fills the screen with the accent, every other phase sits on the ground. */
 
 .timer {
-  --phase: #27272a;
+  --phase: var(--ground);
+  --phase-ink: var(--ink);
   min-height: 100dvh;
   display: flex;
   flex-direction: column;
   padding: max(1rem, env(safe-area-inset-top)) 1rem max(1rem, env(safe-area-inset-bottom));
   background: var(--phase);
-  color: #fff;
+  color: var(--phase-ink);
   transition: background-color 250ms ease;
 }
 
-/* White text on each of these is at least 4.5:1. */
-.timer--leadIn { --phase: #b45309; }
-.timer--work { --phase: #15803d; }
-.timer--rest { --phase: #1d4ed8; }
-.timer--loopRest { --phase: #3730a3; }
-.timer--complete { --phase: #6d28d9; }
-.timer.is-paused { --phase: #3f3f46; }
+.timer--work:not(.is-paused) {
+  --phase: var(--accent);
+  --phase-ink: var(--on-accent);
+}
 
 .timer__body {
   flex: 1;
@@ -459,13 +443,13 @@
   height: 16px;
   margin: 0.5rem 0 1.25rem;
   border-radius: 999px;
-  background: rgb(0 0 0 / 0.3);
+  background: color-mix(in srgb, currentColor 25%, transparent);
   overflow: hidden;
 }
 
 .timer__progress-fill {
   height: 100%;
-  background: #fff;
+  background: currentColor;
   transform-origin: left center;
   transition: transform 100ms linear;
 }
@@ -529,9 +513,9 @@
 .timer__btn {
   flex: 1;
   min-height: 88px;
-  border-color: rgb(255 255 255 / 0.6);
-  background: rgb(0 0 0 / 0.25);
-  color: #fff;
+  border-color: currentColor;
+  background: transparent;
+  color: var(--phase-ink);
   padding: 0 0.5rem;
   font-size: 1.75rem;
   font-weight: 800;
@@ -544,13 +528,13 @@
 }
 
 .timer__btn--primary {
-  border-color: #fff;
-  background: #fff;
-  color: #111;
+  border-color: var(--phase-ink);
+  background: var(--phase-ink);
+  color: var(--phase);
 }
 
 .timer__btn--stop {
-  border-color: #fecaca;
-  background: #7f1d1d;
-  color: #fff;
+  border-color: var(--phase-ink);
+  background: var(--danger);
+  color: var(--on-accent);
 }

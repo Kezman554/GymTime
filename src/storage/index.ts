@@ -1,5 +1,7 @@
-export type { Workout, NewWorkout } from './types'
+export type { Workout, NewWorkout, Theme, Accent } from './types'
 export {
+  ACCENTS,
+  THEMES,
   MIN_LOOPS,
   MIN_SECONDS,
   WorkoutValidationError,
@@ -19,4 +21,4 @@ export {
   createSeedWorkout,
 } from './workoutStore'
 export type { Settings } from './settingsStore'
-export { DEFAULT_SETTINGS, SettingsStore } from './settingsStore'
+export { DEFAULT_SETTINGS, SETTINGS_KEY, SettingsStore } from './settingsStore'

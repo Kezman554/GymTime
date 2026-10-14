@@ -3,14 +3,34 @@ import { DEFAULT_SETTINGS, MemoryKeyValueStore, SettingsStore } from '../src/sto
 import { beepSpec } from '../src/audio/beeps'
 
 describe('SettingsStore', () => {
-  it('defaults to speech and beeps on', async () => {
-    expect(await new SettingsStore(new MemoryKeyValueStore()).load()).toEqual({ speech: true, beeps: true })
+  it('defaults to speech and beeps on, dark mode, orange accent', async () => {
+    expect(await new SettingsStore(new MemoryKeyValueStore()).load()).toEqual({
+      speech: true,
+      beeps: true,
+      theme: 'dark',
+      accent: 'orange',
+    })
   })
 
   it('persists across store instances on the same storage', async () => {
     const kv = new MemoryKeyValueStore()
-    await new SettingsStore(kv).save({ speech: false, beeps: true })
-    expect(await new SettingsStore(kv).load()).toEqual({ speech: false, beeps: true })
+    const saved = { speech: false, beeps: true, theme: 'light', accent: 'sky' } as const
+    await new SettingsStore(kv).save(saved)
+    expect(await new SettingsStore(kv).load()).toEqual(saved)
+  })
+
+  it('keeps sound settings saved before theme and accent existed', async () => {
+    const kv = new MemoryKeyValueStore()
+    await kv.set('gymtime.settings', JSON.stringify({ speech: false, beeps: false }))
+    expect(await new SettingsStore(kv).load()).toEqual({ ...DEFAULT_SETTINGS, speech: false, beeps: false })
+  })
+
+  it('rejects an unknown theme or accent field by field', async () => {
+    const kv = new MemoryKeyValueStore()
+    await kv.set('gymtime.settings', JSON.stringify({ theme: 'sepia', accent: 'green' }))
+    expect(await new SettingsStore(kv).load()).toEqual({ ...DEFAULT_SETTINGS, accent: 'green' })
+    await kv.set('gymtime.settings', JSON.stringify({ theme: 'light', accent: 'purple' }))
+    expect(await new SettingsStore(kv).load()).toEqual({ ...DEFAULT_SETTINGS, theme: 'light' })
   })
 
   it('falls back field by field on corrupt or partial data', async () => {
@@ -18,7 +38,7 @@ describe('SettingsStore', () => {
     await kv.set('gymtime.settings', '{not json')
     expect(await new SettingsStore(kv).load()).toEqual(DEFAULT_SETTINGS)
     await kv.set('gymtime.settings', JSON.stringify({ beeps: false, speech: 'yes' }))
-    expect(await new SettingsStore(kv).load()).toEqual({ speech: true, beeps: false })
+    expect(await new SettingsStore(kv).load()).toEqual({ ...DEFAULT_SETTINGS, beeps: false })
     await kv.set('gymtime.settings', 'null')
     expect(await new SettingsStore(kv).load()).toEqual(DEFAULT_SETTINGS)
   })
