@@ -428,7 +428,17 @@ INSTALLING GYMTIME ON THE PHONE
   native layer can't read the WebView's localStorage theme before the page
   loads, so light-mode users still see a brief dark splash.
 - Gotcha: "--" is illegal inside an XML comment; Gradle fails the build.
-- NOT verified on the phone: the real workout run (needle/arc through work,
-  rest, loop end), pause, stop confirm and completion. The A32 dropped off
-  USB as the run started. Nobody has done the two-metre work/rest check.
+- Verified ON THE A32 (light/sky, the user's own setting) with a real
+  Test 3x10 run sampled every 250 ms over WebView devtools: 435 samples,
+  needle never moved backwards within a segment and each segment swept to
+  a full turn before resetting; accent on word + arc only in work, ink word
+  + muted arc in get ready/rest/paused; exercise name muted outside work;
+  confirm shows Stop (left, danger outline) / Keep going (right, accent);
+  complete = accent COMPLETE, 836 836 ink arc, needle at 0, 1:30. No
+  vertical or horizontal overflow at any sample. Test 3x10 has no loop
+  rest, so LOOP REST was only measured, not seen live.
+- Two-metre check NOT done in person. A 120px-wide downscale (about what
+  2 m resolves) keeps WORK vs REST clearly legible via the word, but the
+  5px arc is faint and the accent Pause button is the largest colour block
+  in both phases, so it does not help tell them apart.
 - 104 tests passing, lint clean.
