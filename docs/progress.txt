@@ -642,3 +642,20 @@ INSTALLING GYMTIME ON THE PHONE
   Trip?" with Cancel focused; Back closed it and stayed in the editor;
   confirm returned Home without it; still gone after force-stop +
   relaunch. Left dark/green (the user's), Core 15 selected.
+
+2026-10-14 — GO!, "Go" cue, 2px timer rules, round icons 3:1
+- Round + / cog icons: color-mix(in srgb, hairline, muted) = 3.01:1 light,
+  3.48:1 dark on the ground (was hairline, 1.42 / 1.56). Ring stays hairline.
+- Work phase label 'Work' -> 'GO!'; other labels unchanged.
+- Work cue: it was the bare exercise name (no word for "work" to swap), so
+  it is now "Go. <exercise>", matching "Get ready. <exercise>"; no "!"
+  because TTS voices punctuation unpredictably. Other cues and "Workout
+  complete" unchanged; cues test updated.
+- .timer__head bottom and .timer__below top rules 1px -> 2px, same --rule
+  colour; every other hairline stays 1px.
+- Verified ON THE A32 with Test 3x10 run to the end, Speech switched on
+  for the run (then back off): label GO! on the first work interval;
+  logcat TTS text "Get ready. Exercise 1", "Go. Exercise 1", "Rest. Next
+  up: Exercise 2", ..., "Workout complete"; both rules 2px in go, rest
+  and complete vs Home rows 1px. Left dark/green, speech/beeps off, Core
+  15 selected. 120 tests passing, lint clean.

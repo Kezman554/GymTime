@@ -6,7 +6,8 @@ export function segmentCue(segment: Segment): string {
     case 'leadIn':
       return `Get ready. ${segment.exerciseName}`
     case 'work':
-      return segment.exerciseName
+      // "Go", not "Go!": TTS engines voice punctuation unpredictably.
+      return `Go. ${segment.exerciseName}`
     case 'rest':
       return `Rest. Next up: ${segment.exerciseName}`
     case 'loopRest':

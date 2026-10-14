@@ -11,13 +11,13 @@ describe('segmentCue', () => {
   it('speaks each kind of segment', () => {
     expect(plain.map(segmentCue)).toEqual([
       'Get ready. Plank',
-      'Plank',
+      'Go. Plank',
       'Rest. Next up: Crunch',
-      'Crunch',
+      'Go. Crunch',
       'Rest. Next up: Plank', // loop boundary without a between-loop rest
-      'Plank',
+      'Go. Plank',
       'Rest. Next up: Crunch',
-      'Crunch',
+      'Go. Crunch',
     ])
   })
 

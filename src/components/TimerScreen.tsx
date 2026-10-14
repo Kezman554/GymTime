@@ -12,7 +12,7 @@ import { Dial } from './Dial'
 
 const PHASE_LABEL: Record<SegmentType, string> = {
   leadIn: 'Get ready',
-  work: 'Work',
+  work: 'GO!',
   rest: 'Rest',
   loopRest: 'Loop rest',
 }
