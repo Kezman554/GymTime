@@ -192,13 +192,20 @@
   border-top: 1px solid var(--hairline);
   border-bottom: 1px solid var(--hairline);
   border-left: 4px solid transparent;
+  /* Transparent until selected, so the frame never moves the row's content. */
+  border-right: 1px solid transparent;
   background: var(--ground);
 }
 
-/* The same 10% accent tint as before, mixed into the ground rather than into
-   transparent, so it looks identical but the mark cannot show through it. */
+/*
+ * Selected: one accent frame, 4px on the left and 1px on the other three
+ * sides, at full strength. The 10% tint matches the mark's colour where the
+ * mark's ring crosses an adjacent gap, so the frame — not the tint — carries
+ * the row's edge there. The tint is unchanged and opaque (mixed into the
+ * ground), so the mark cannot show through it.
+ */
 .workout-item.is-selected {
-  border-left-color: var(--accent);
+  border-color: var(--accent);
   background: color-mix(in srgb, var(--accent) 10%, var(--ground));
 }
 

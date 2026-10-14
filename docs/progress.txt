@@ -713,3 +713,17 @@ INSTALLING GYMTIME ON THE PHONE
   merges into the row. The row's own hairline still marks the edge there
   (1.23-1.39:1 vs the tint). Elsewhere gap-vs-tint is 1.12-1.18:1.
 - 120 tests passing, lint clean.
+
+2026-10-14 — Selected row framed in the accent
+- .workout-item.is-selected: border-color accent on all four sides (4px
+  left bar + 1px top/right/bottom), reading as one frame; unselected rows
+  carry a transparent 1px right border so nothing moves. Tint and mark
+  opacity unchanged; unselected hairlines unchanged.
+- Calculated for all six accents: frame vs tint and vs mark >= 4.11:1
+  (light brass lowest; dark tint == mark so both equal, 4.40-11.28).
+- Measured ON THE A32, six-workout library (swapped from a backup and
+  restored byte-identical), Sample 3 selected so the mark's ring crosses
+  the gaps above and below it, light and dark x sky/orange/green/red:
+  frame vs mark 4.21-4.81 light, 4.38-6.65 dark; vs tint 4.40-5.03 light,
+  4.40-6.65 dark. Right edge full accent. Header/first row/selected/Start
+  and text x identical to the previous build.
