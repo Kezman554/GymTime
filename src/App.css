@@ -367,6 +367,14 @@
   flex-direction: column;
 }
 
+.ground-trial__white {
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--rule);
+  background: #fff;
+  color: #000;
+  font-weight: 700;
+}
+
 .ground-trial__option {
   justify-content: flex-start;
   text-align: left;

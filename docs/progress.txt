@@ -530,3 +530,15 @@ INSTALLING GYMTIME ON THE PHONE
 - To finish: bake the winner into :root[data-theme='light'], delete the
   data-ground blocks, LIGHT_GROUNDS, Settings.lightGround, the section,
   the inline-script line and the test fields marked TEMPORARY.
+- Round two (user: A preferred, C furthest from white but wrong; same HSL
+  hue 44/43, so chroma is the axis). B, C, D dropped; A kept; added E, F,
+  G, H plus a pure-white reference strip in the section. Measured vs ground
+  (red/orange/sky/green/brass/mono=ink/danger), on the A32 and in Python:
+  A E8DFC6 5.18/4.54/5.20/5.78/4.79/13.64/5.18
+  E ECE0BD 5.23/4.58/5.26/5.83/4.84/13.78/5.23  (HSL 45/55%)
+  F EFDFB3 5.20/4.56/5.23/5.80/4.81/13.71/5.20  (HSL 44/65%)
+  G EEDDC2 5.16/4.52/5.19/5.76/4.77/13.61/5.16  (HSL 37; was ECDBC0, orange 4.44)
+  H F3DBCB 5.18/4.54/5.21/5.78/4.79/13.65/5.18  (HSL 24; was EED6C6, orange 4.33)
+  Orange, not brass, is the binding constraint on every candidate.
+  Hairline/track + muted: E CBBD93/4E421E, F CEBC89/514112, G CFBA98/
+  504024, H D5B7A2/553D2D (muted ~7.5:1 throughout).

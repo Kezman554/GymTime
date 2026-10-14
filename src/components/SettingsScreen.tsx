@@ -22,9 +22,10 @@ const ACCENT_LABEL: Record<Accent, string> = {
 const GROUND_LABEL: Record<LightGround, string> = {
   current: 'Current · #E9E5DC',
   a: 'A · #E8DFC6',
-  b: 'B · #E3DCCB',
-  c: 'C · #EFE4C8',
-  d: 'D · #DED8C6',
+  e: 'E · #ECE0BD',
+  f: 'F · #EFDFB3',
+  g: 'G · #EEDDC2',
+  h: 'H · #F3DBCB',
 }
 
 const SOUND_OPTIONS: { key: 'speech' | 'beeps'; label: string }[] = [
@@ -115,6 +116,10 @@ export function SettingsScreen({ settings, onChange, onDone }: SettingsScreenPro
           Light ground — temporary trial
         </h2>
         <p className="settings__note">Light mode only. Pick one, then live with it for a while.</p>
+        {/* Pure white beside the ground, so "reads as white" can be judged against the real thing. */}
+        <div className="ground-trial__white" aria-hidden="true">
+          White reference
+        </div>
         <div className="ground-trial" role="radiogroup" aria-labelledby="settings-ground">
           {LIGHT_GROUNDS.map((ground) => (
             <button

@@ -25,7 +25,7 @@ export const ACCENTS = ['red', 'orange', 'sky', 'green', 'brass', 'mono'] as con
 export type Accent = (typeof ACCENTS)[number]
 
 /** TEMPORARY: light-ground trial. 'current' is the shipped #E9E5DC. */
-export const LIGHT_GROUNDS = ['current', 'a', 'b', 'c', 'd'] as const
+export const LIGHT_GROUNDS = ['current', 'a', 'e', 'f', 'g', 'h'] as const
 export type LightGround = (typeof LIGHT_GROUNDS)[number]
 
 export const MIN_SECONDS = 5
