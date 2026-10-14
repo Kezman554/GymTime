@@ -479,3 +479,34 @@ INSTALLING GYMTIME ON THE PHONE
   Back minimises the app instead of closing the dialog. Real touches (CDP
   Input.dispatchTouchEvent) behave correctly. Open it by touch in tests.
 - 112 tests passing, lint clean.
+
+2026-10-14 — Light-mode "white" report; transparent system bars
+- Diagnosis: on the A32 in light mode the ground was NOT white. --ground
+  resolved to #e9e5dc on html and body, data-theme=light matched, the
+  shipped :root[data-theme=light] block was intact, and both the WebView
+  screenshot and the adb screencap framebuffer were (233,229,220) on Home,
+  work and rest. What was wrong: status and nav bars stayed #15171A (the
+  native window colour) in light mode, framing the bone page in near-black.
+- Fix: MainActivity calls EdgeToEdge.enable with fully transparent status
+  and nav styles (as Capacitor's SystemBars docs recommend) and turns off
+  navigation-bar contrast enforcement (else a scrim on 3-button nav). No
+  bar colour exists anywhere, so nothing to keep in sync with the tokens.
+  Icon tint: src/native/systemBars.ts -> SystemBars.setStyle (LIGHT = dark
+  icons for the light ground, DARK = light icons), called from
+  applyAppearance, which also owns data-theme and the theme-color meta.
+  capacitor.config: SystemBars.initialViewportFitValueHint 'cover'.
+  windowBackground stays the dark ground (pre-paint flash accepted).
+- Gotcha: EdgeToEdge.enable BEFORE super.onCreate built the window decor
+  with the splash theme, which has an action bar: a "GymTime" title bar
+  appeared and env(safe-area-inset-top) read 83px. Call it after super.
+- Verified ON THE A32 (framebuffer pixels + env() measured in the page):
+  light theme with system dark on, and with it off (live switch and cold
+  start): bars (233,229,220), status icons ~(89,88,85), nav icons
+  ~(136,134,129). Dark theme with system light and system dark: bars
+  (21,23,26), icons ~(204,205,205). Viewport 360x800; env top 27, bottom
+  48; first content at 43 (Home) / 27 (timer), last control ends 704
+  (Home) / 752 (timer) against the nav bar at 752 — nothing hidden.
+  Left as found: theme dark/sky (the user's), system night mode on.
+- Observations, not changed: the timer header sits flush at the status
+  bar's edge; Home has an empty 48px band above the nav bar because both
+  .screen and .home__footer pad env(safe-area-inset-bottom).
