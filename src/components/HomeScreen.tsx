@@ -1,6 +1,7 @@
 import type { Workout } from '../storage'
 import { formatDuration, workoutDurationSeconds } from '../engine/duration'
 import { CogIcon, PencilIcon, PlusIcon } from './icons'
+import { BrandMark } from './BrandMark'
 
 interface HomeScreenProps {
   workouts: Workout[]
@@ -68,42 +69,50 @@ export function HomeScreen({
       <div className="chapter-ring" aria-hidden="true" />
 
       {workouts.length === 0 ? (
-        <p className="empty">No workouts yet. Tap + to make one.</p>
+        // Empty: the mark sits in the flow with the message beneath it, as one group.
+        <div className="empty-state">
+          <BrandMark className="brand-mark--inline" />
+          <p className="empty">No workouts yet. Tap + to make one.</p>
+        </div>
       ) : (
-        <ul className="workout-list" aria-label="Saved workouts">
-          {workouts.map((workout) => {
-            const isSelected = workout.id === selectedId
-            return (
-              <li key={workout.id} className={`workout-item${isSelected ? ' is-selected' : ''}`}>
-                <button
-                  type="button"
-                  aria-pressed={isSelected}
-                  className="workout-row"
-                  onClick={() => onSelect(workout.id)}
-                >
-                  <RatioGlyph workout={workout} />
-                  <span className="workout-row__text">
-                    <span className="workout-row__name">{workout.name}</span>
-                    <span className="workout-row__spec">{summary(workout)}</span>
+        <>
+          {/* Fixed to the viewport, so a scrolling list slides over it. */}
+          <BrandMark className="brand-mark--behind" />
+          <ul className="workout-list" aria-label="Saved workouts">
+            {workouts.map((workout) => {
+              const isSelected = workout.id === selectedId
+              return (
+                <li key={workout.id} className={`workout-item${isSelected ? ' is-selected' : ''}`}>
+                  <button
+                    type="button"
+                    aria-pressed={isSelected}
+                    className="workout-row"
+                    onClick={() => onSelect(workout.id)}
+                  >
+                    <RatioGlyph workout={workout} />
+                    <span className="workout-row__text">
+                      <span className="workout-row__name">{workout.name}</span>
+                      <span className="workout-row__spec">{summary(workout)}</span>
+                    </span>
+                  </button>
+                  {/* Every row keeps this slot, so nothing reflows when the selection moves. */}
+                  <span className="workout-item__edit-slot">
+                    {isSelected && (
+                      <button
+                        type="button"
+                        className="workout-item__edit"
+                        aria-label={`Edit ${workout.name}`}
+                        onClick={() => onEdit(workout)}
+                      >
+                        <PencilIcon />
+                      </button>
+                    )}
                   </span>
-                </button>
-                {/* Every row keeps this slot, so nothing reflows when the selection moves. */}
-                <span className="workout-item__edit-slot">
-                  {isSelected && (
-                    <button
-                      type="button"
-                      className="workout-item__edit"
-                      aria-label={`Edit ${workout.name}`}
-                      onClick={() => onEdit(workout)}
-                    >
-                      <PencilIcon />
-                    </button>
-                  )}
-                </span>
-              </li>
-            )
-          })}
-        </ul>
+                </li>
+              )
+            })}
+          </ul>
+        </>
       )}
 
       <div className="home__footer">

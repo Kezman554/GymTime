@@ -685,3 +685,31 @@ INSTALLING GYMTIME ON THE PHONE
   then fading. App switcher and Settings > App info both show the orange
   stopwatch on the dark ground inside Samsung's squircle mask, glyph well
   clear of the edge. Returned to GymTime afterwards.
+
+2026-10-14 — Brand mark behind Home's list
+- src/components/BrandMark.tsx: the stopwatch glyph inline (copied from
+  <g id="glyph"> in assets/stopwatch.svg, currentColor = var(--accent)),
+  aria-hidden, pointer-events none. Both files carry a TWO COPIES comment.
+  With workouts it is position:fixed (top 47%, width min(78vw, 300px))
+  under the list (z-index 1), so a scrolling list slides over it; with
+  none it sits in the flow above the message as one centred group.
+- --mark-opacity per theme: 0.12 light, 0.10 dark. Mark vs ground: light
+  ~1.20:1, dark 1.12-1.18:1 depending on accent.
+- Rows: 8px gap; each row opaque (ground) with its own hairline top AND
+  bottom (list top rule dropped) — an opaque row on the plain ground has
+  no edge except where it crosses the mark, so both edges are ruled and
+  the gap reads everywhere. Selected tint unchanged in look: 10% accent
+  now mixed into the ground instead of transparent, so it is opaque.
+- Verified ON THE A32 (library swapped from a backup and restored
+  byte-identical afterwards): 1, 2 and 6 workouts x light/dark x
+  sky/orange/green, plus empty (deleted a throwaway in-session) in
+  light/sky, dark/orange, light/green. Header 27-83, first row 123,
+  Start 608-704 (1-2 rows), text x=86 everywhere — as the previous build;
+  rows are 1px taller (second hairline) and later rows move by the 8px
+  gaps. Six rows scroll 31px: rows moved 123 -> 92, mark stayed 210-542.
+- FINDING, not hidden: where the mark's ring crosses a gap next to the
+  selected row, the mark pixel equals the selected tint (dark 1.00:1,
+  light 1.04-1.05:1) — both are ~10% accent — so that stretch of gap
+  merges into the row. The row's own hairline still marks the edge there
+  (1.23-1.39:1 vs the tint). Elsewhere gap-vs-tint is 1.12-1.18:1.
+- 120 tests passing, lint clean.

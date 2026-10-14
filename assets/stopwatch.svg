@@ -11,7 +11,12 @@
          and it is the app's identity, not a preference.
        - The elapsed sweep stays a filled wedge rather than the timer
          dial's thin stroked arc. A thin ring disappears at launcher size,
-         and an icon may simplify what the screen draws in full. -->
+         and an icon may simplify what the screen draws in full.
+
+       TWO COPIES: the <g id="glyph"> drawing below is also copied inline
+       into src/components/BrandMark.tsx (Home's background mark, which has
+       to follow the user's accent, so it can't use this file). A change to
+       the drawing has to be made in both. -->
   <rect width="1024" height="1024" fill="#15171a"/>
   <g id="glyph" fill="none" stroke="#e8692e" stroke-linecap="round" stroke-linejoin="round">
     <!-- crown and stem -->

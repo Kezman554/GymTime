@@ -17,6 +17,8 @@
   --on-accent: #0a1218;
   --danger: #e8504f;
   --scrim: rgb(0 0 0 / 0.6);
+  /* Home's background brand mark: accent at this opacity, tuned per ground. */
+  --mark-opacity: 0.1;
 
   --accent-red: #e8504f;
   --accent-orange: #e8692e;
@@ -37,6 +39,7 @@
   --on-accent: #f6f3ec;
   --danger: #ae2318;
   --scrim: rgb(23 22 15 / 0.45);
+  --mark-opacity: 0.12;
 
   --accent-red: #ae2318;
   --accent-orange: #9e3d14;

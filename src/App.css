@@ -168,24 +168,75 @@
   background: repeating-linear-gradient(to right, var(--ink) 0 1px, transparent 1px 8px) top / 100% 7px no-repeat;
 }
 
+/*
+ * Rows sit above the brand mark with an 8px gap between them for it to show
+ * through. Each row is opaque and carries its own hairline top and bottom:
+ * on the plain ground a row has no edge of its own except where it crosses
+ * the mark, so ruling both edges keeps the gap reading as a gap everywhere.
+ */
 .workout-list {
+  position: relative;
+  z-index: 1;
   list-style: none;
   margin: 0;
   padding: 0;
-  border-top: 1px solid var(--hairline);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 /* A 4px left border on every item, accent only when selected, so nothing shifts. */
 .workout-item {
   display: flex;
   align-items: center;
+  border-top: 1px solid var(--hairline);
   border-bottom: 1px solid var(--hairline);
   border-left: 4px solid transparent;
+  background: var(--ground);
 }
 
+/* The same 10% accent tint as before, mixed into the ground rather than into
+   transparent, so it looks identical but the mark cannot show through it. */
 .workout-item.is-selected {
   border-left-color: var(--accent);
-  background: color-mix(in srgb, var(--accent) 10%, transparent);
+  background: color-mix(in srgb, var(--accent) 10%, var(--ground));
+}
+
+/* Decorative: never tapped, focused or announced (aria-hidden in the markup). */
+.brand-mark {
+  display: block;
+  height: auto;
+  color: var(--accent);
+  opacity: var(--mark-opacity);
+  pointer-events: none;
+}
+
+/* Behind a list: fixed to the viewport, centred between header and footer. */
+.brand-mark--behind {
+  position: fixed;
+  z-index: 0;
+  left: 50%;
+  top: 47%;
+  width: min(78vw, 300px);
+  transform: translate(-50%, -50%);
+}
+
+/* Empty list: the mark and the message are one centred group. */
+.empty-state {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+}
+
+.brand-mark--inline {
+  width: min(56vw, 220px);
+}
+
+.empty-state .empty {
+  text-align: center;
 }
 
 .workout-row {
