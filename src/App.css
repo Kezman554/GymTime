@@ -170,7 +170,7 @@
 
 /*
  * Rows sit above the brand mark with an 8px gap between them for it to show
- * through. Each row is opaque and carries its own hairline top and bottom:
+ * through. Each row carries its own hairline top and bottom:
  * on the plain ground a row has no edge of its own except where it crosses
  * the mark, so ruling both edges keeps the gap reading as a gap everywhere.
  */
@@ -194,8 +194,9 @@
   border-left: 4px solid transparent;
   /* Transparent until selected, so the frame never moves the row's content. */
   border-right: 1px solid transparent;
-  /* TEMPORARY trial: --row-alpha < 1 lets the mark show through unselected rows. */
-  background: color-mix(in srgb, var(--ground) calc(var(--row-alpha, 1) * 100%), transparent);
+  /* 80% ground: the mark shows faintly through unselected rows. The selected
+     row below stays opaque. */
+  background: color-mix(in srgb, var(--ground) 80%, transparent);
 }
 
 /*
@@ -493,69 +494,6 @@
 .setting-row__label {
   font-size: 1.25rem;
   font-weight: 700;
-}
-
-/* TEMPORARY: mark/row trial panel. */
-
-.settings__note {
-  margin: 0;
-  font-size: 1rem;
-  color: var(--muted);
-}
-
-.trial__label {
-  margin: 0.25rem 0 0;
-  font-size: 1rem;
-  font-weight: 700;
-}
-
-.trial__option {
-  min-width: 0;
-  padding: 0;
-  font-size: 1.0625rem;
-}
-
-.trial__table {
-  width: 100%;
-  border-collapse: collapse;
-  font-variant-numeric: tabular-nums;
-}
-
-.trial__caption {
-  caption-side: bottom;
-  padding-top: 0.5rem;
-  text-align: left;
-  font-size: 0.8125rem;
-  color: var(--muted);
-}
-
-.trial__table th,
-.trial__table td {
-  padding: 0.375rem 0.25rem;
-  border-bottom: 1px solid var(--hairline);
-  text-align: right;
-  font-size: 1rem;
-}
-
-.trial__table th {
-  color: var(--muted);
-  font-weight: 700;
-}
-
-.trial__current {
-  outline: 2px solid var(--ink);
-  outline-offset: -2px;
-  font-weight: 700;
-}
-
-.trial__fail {
-  color: var(--danger);
-}
-
-.trial__verdict {
-  font-size: 0.75rem;
-  font-weight: 700;
-  text-transform: uppercase;
 }
 
 /* Editor: bottom-ruled fields, outlined icon buttons, ruled groups. */

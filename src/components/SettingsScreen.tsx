@@ -1,6 +1,4 @@
-import { useMemo } from 'react'
 import { ACCENTS, THEMES, type Accent, type Settings, type Theme } from '../storage'
-import { MARK_STEPS, ROW_STEPS, specLineTable } from '../trial'
 
 interface SettingsScreenProps {
   settings: Settings
@@ -26,11 +24,6 @@ const SOUND_OPTIONS: { key: 'speech' | 'beeps'; label: string }[] = [
 ]
 
 export function SettingsScreen({ settings, onChange, onDone }: SettingsScreenProps) {
-  // TEMPORARY trial: read from the live tokens. It covers all six accents, so
-  // only the mode matters; applyAppearance has already set it on <html>.
-  const table = useMemo(() => specLineTable(settings.theme), [settings.theme])
-  const marks = MARK_STEPS[settings.theme]
-
   return (
     <main className="screen settings">
       <header className="screen__header">
@@ -105,81 +98,6 @@ export function SettingsScreen({ settings, onChange, onDone }: SettingsScreenPro
             </li>
           ))}
         </ul>
-      </section>
-
-      {/* TEMPORARY: mark/row trial. Remove the section, src/trial.ts and the trial settings once baked. */}
-      <section className="settings__section" aria-labelledby="settings-trial">
-        <h2 id="settings-trial" className="section-label">
-          Mark and rows — temporary trial
-        </h2>
-        <p className="settings__note">Both modes. Steps are this mode's values.</p>
-
-        <h3 id="trial-mark" className="trial__label">Mark opacity</h3>
-        <div className="segmented" role="radiogroup" aria-labelledby="trial-mark">
-          {marks.map((value, index) => (
-            <button
-              key={value}
-              type="button"
-              role="radio"
-              aria-checked={settings.trialMark === index}
-              className={`btn segmented__option trial__option${settings.trialMark === index ? ' is-selected' : ''}`}
-              onClick={() => onChange({ trialMark: index })}
-            >
-              {value.toFixed(2)}
-            </button>
-          ))}
-        </div>
-
-        <h3 id="trial-row" className="trial__label">Unselected rows</h3>
-        <div className="segmented" role="radiogroup" aria-labelledby="trial-row">
-          {ROW_STEPS.map((value, index) => (
-            <button
-              key={value}
-              type="button"
-              role="radio"
-              aria-checked={settings.trialRow === index}
-              className={`btn segmented__option trial__option${settings.trialRow === index ? ' is-selected' : ''}`}
-              onClick={() => onChange({ trialRow: index })}
-            >
-              {Math.round(value * 100)}%
-            </button>
-          ))}
-        </div>
-
-        <table className="trial__table">
-          <caption className="trial__caption">
-            Spec line, worst case over the mark&apos;s densest stroke, all six accents. Below 4.5:1 is not
-            shippable.
-          </caption>
-          <thead>
-            <tr>
-              <th scope="col">Mark</th>
-              {ROW_STEPS.map((row) => (
-                <th key={row} scope="col">
-                  {Math.round(row * 100)}%
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {table.map((cells, m) => (
-              <tr key={m}>
-                <th scope="row">{marks[m].toFixed(2)}</th>
-                {cells.map((ratio, r) => (
-                  <td
-                    key={r}
-                    className={`${ratio < 4.5 ? 'trial__fail' : ''}${
-                      settings.trialMark === m && settings.trialRow === r ? ' trial__current' : ''
-                    }`}
-                  >
-                    {ratio.toFixed(2)}
-                    {ratio < 4.5 && <span className="trial__verdict"> not shippable</span>}
-                  </td>
-                ))}
-              </tr>
-            ))}
-          </tbody>
-        </table>
       </section>
 
       <div className="settings__footer">

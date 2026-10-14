@@ -9,12 +9,9 @@ export interface Settings {
   beeps: boolean
   theme: Theme
   accent: Accent
-  /** TEMPORARY: mark/row trial step indexes (see src/trial.ts). */
-  trialMark: number
-  trialRow: number
 }
 
-export const DEFAULT_SETTINGS: Settings = { speech: true, beeps: true, theme: 'dark', accent: 'orange', trialMark: 0, trialRow: 0 }
+export const DEFAULT_SETTINGS: Settings = { speech: true, beeps: true, theme: 'dark', accent: 'orange' }
 
 export class SettingsStore {
   private readonly store: KeyValueStore
@@ -39,17 +36,10 @@ export class SettingsStore {
       beeps: typeof candidate.beeps === 'boolean' ? candidate.beeps : DEFAULT_SETTINGS.beeps,
       theme: THEMES.includes(candidate.theme as Theme) ? (candidate.theme as Theme) : DEFAULT_SETTINGS.theme,
       accent: ACCENTS.includes(candidate.accent as Accent) ? (candidate.accent as Accent) : DEFAULT_SETTINGS.accent,
-      trialMark: step(candidate.trialMark, 3),
-      trialRow: step(candidate.trialRow, 2),
     }
   }
 
   async save(settings: Settings): Promise<void> {
     await this.store.set(SETTINGS_KEY, JSON.stringify(settings))
   }
-}
-
-/** TEMPORARY: a whole-number trial step from 0 to max, else 0. */
-function step(value: unknown, max: number): number {
-  return typeof value === 'number' && Number.isInteger(value) && value >= 0 && value <= max ? value : 0
 }

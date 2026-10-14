@@ -753,3 +753,15 @@ INSTALLING GYMTIME ON THE PHONE
 - Persistence checked (0.24 / 90% survived force-stop). User data swapped
   for the six-workout library and restored byte-identical; trial left at
   defaults (current values, opaque rows).
+
+2026-10-14 — Mark and rows baked: step 3, 80%
+- User chose "0.24 and 80%": read as the third step, so --mark-opacity
+  0.28 light / 0.24 dark; unselected rows color-mix(ground 80%,
+  transparent). Selected row stays opaque with tint and frame.
+- Trial removed entirely (src/trial.ts, Settings.trialMark/trialRow, the
+  panel and its CSS, applyTrial call, test fields). Diff vs cc34b48 is the
+  two opacities and the row background. Stale trial keys in saved settings
+  are ignored and dropped on the next save.
+- Spec line worst case, ON THE A32 across all six accents (six-workout
+  library swapped from a backup and restored byte-identical): light 6.76:1
+  (Mono), dark 6.36:1 (Mono); calculated 6.79 / 6.30.
