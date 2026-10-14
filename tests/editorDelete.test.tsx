@@ -1,8 +1,8 @@
 // @vitest-environment jsdom
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { act, cleanup, fireEvent, render, screen } from '@testing-library/react'
-import { HomeScreen } from '../src/components/HomeScreen'
-import type { Workout } from '../src/storage'
+import { EditorScreen } from '../src/components/EditorScreen'
+import type { NewWorkout, Workout } from '../src/storage'
 
 const pushDay: Workout = {
   id: 'push',
@@ -14,60 +14,76 @@ const pushDay: Workout = {
   loopEnabled: false,
   restBetweenLoopsSeconds: 0,
 }
+const newWorkout: NewWorkout = {
+  name: pushDay.name,
+  exercises: pushDay.exercises,
+  workSeconds: pushDay.workSeconds,
+  restSeconds: pushDay.restSeconds,
+  loops: pushDay.loops,
+  loopEnabled: pushDay.loopEnabled,
+  restBetweenLoopsSeconds: pushDay.restBetweenLoopsSeconds,
+}
 
-function setup() {
+function setup(initial: NewWorkout | Workout = pushDay) {
   const onDelete = vi.fn()
   // Stands in for App's back plumbing: the latest interceptor is what Back would call.
   let interceptor: (() => boolean) | null = null
-  const setBackInterceptor = (intercept: (() => boolean) | null) => {
-    interceptor = intercept
-  }
+  let stayed: boolean | undefined
   render(
-    <HomeScreen
-      workouts={[pushDay]}
-      selectedId="push"
-      onSelect={() => {}}
-      onNew={() => {}}
-      onEdit={() => {}}
+    <EditorScreen
+      initial={initial}
+      onSave={async () => {}}
+      onCancel={() => {}}
       onDelete={onDelete}
-      onStart={() => {}}
-      onOpenSettings={() => {}}
-      setBackInterceptor={setBackInterceptor}
+      setBackInterceptor={(intercept) => {
+        interceptor = intercept
+      }}
     />,
   )
-  const pressBack = () => act(() => void interceptor?.())
-  return { onDelete, pressBack, getInterceptor: () => interceptor }
+  const pressBack = () =>
+    act(() => {
+      stayed = interceptor?.()
+    })
+  return { onDelete, pressBack, getInterceptor: () => interceptor, stayed: () => stayed }
 }
 
-const deleteButton = () => screen.getByRole('button', { name: 'Delete' })
+/** The editor's own Delete, not the dialog's. */
+const editorDelete = () => document.querySelector<HTMLButtonElement>('.editor__delete')!
 
 afterEach(cleanup)
 
-describe('Home delete confirmation', () => {
+describe('Editor delete', () => {
+  it('offers no Delete when creating a new workout', () => {
+    setup(newWorkout)
+    expect(document.querySelector('.editor__delete')).toBeNull()
+    expect(screen.queryByRole('button', { name: 'Delete' })).toBeNull()
+  })
+
+  it('offers Delete below Cancel and Save when editing a saved workout', () => {
+    setup()
+    const buttons = [...document.querySelectorAll('.editor__footer button')].map((b) => b.textContent)
+    expect(buttons.slice(-3)).toEqual(['Cancel', 'Save', 'Delete'])
+  })
+
   it('a single tap on Delete removes nothing and opens the dialog', () => {
     const { onDelete } = setup()
-    fireEvent.click(deleteButton())
+    fireEvent.click(editorDelete())
     expect(onDelete).not.toHaveBeenCalled()
     const dialog = screen.getByRole('alertdialog', { name: 'Delete Push Day?' })
-    expect(dialog).toHaveProperty('textContent', expect.stringContaining("can't be undone"))
+    expect(dialog.textContent).toContain("can't be undone")
   })
 
   it('a double-tap on Delete removes nothing', () => {
     const { onDelete } = setup()
-    const footerDelete = deleteButton()
-    const pushState = vi.spyOn(window.history, 'pushState')
-    fireEvent.click(footerDelete)
-    fireEvent.click(footerDelete)
+    fireEvent.click(editorDelete())
+    fireEvent.click(editorDelete())
     expect(onDelete).not.toHaveBeenCalled()
     expect(screen.getAllByRole('alertdialog')).toHaveLength(1)
-    // One history entry for Back to consume, not one per tap.
-    expect(pushState).toHaveBeenCalledTimes(1)
-    pushState.mockRestore()
   })
 
   it('puts Delete on the left, Cancel on the right, and focuses Cancel', () => {
     setup()
-    fireEvent.click(deleteButton())
+    fireEvent.click(editorDelete())
     const buttons = screen.getByRole('alertdialog').querySelectorAll('button')
     expect([...buttons].map((b) => b.textContent)).toEqual(['Delete', 'Cancel'])
     expect(document.activeElement).toBe(buttons[1])
@@ -75,7 +91,7 @@ describe('Home delete confirmation', () => {
 
   it('keeps focus inside the dialog', () => {
     setup()
-    fireEvent.click(deleteButton())
+    fireEvent.click(editorDelete())
     const [confirm, cancel] = screen.getByRole('alertdialog').querySelectorAll('button')
     fireEvent.keyDown(cancel, { key: 'Tab' })
     expect(document.activeElement).toBe(confirm)
@@ -85,37 +101,39 @@ describe('Home delete confirmation', () => {
 
   it('Cancel leaves the workout in place', () => {
     const { onDelete } = setup()
-    fireEvent.click(deleteButton())
-    fireEvent.click(screen.getByRole('button', { name: 'Cancel' }))
+    fireEvent.click(editorDelete())
+    // The dialog's Cancel, not the editor's own.
+    fireEvent.click(screen.getByRole('alertdialog').querySelectorAll('button')[1])
     expect(screen.queryByRole('alertdialog')).toBeNull()
     expect(onDelete).not.toHaveBeenCalled()
   })
 
   it('tapping the scrim leaves the workout in place', () => {
     const { onDelete } = setup()
-    fireEvent.click(deleteButton())
+    fireEvent.click(editorDelete())
     fireEvent.click(screen.getByTestId('scrim'))
     expect(screen.queryByRole('alertdialog')).toBeNull()
     expect(onDelete).not.toHaveBeenCalled()
   })
 
-  it('Back closes the dialog through the back interceptor and leaves the workout in place', () => {
-    const { onDelete, pressBack, getInterceptor } = setup()
+  it('Back closes the dialog, stays in the editor, and leaves the workout in place', () => {
+    const { onDelete, pressBack, getInterceptor, stayed } = setup()
     expect(getInterceptor()).toBeNull()
-    fireEvent.click(deleteButton())
+    fireEvent.click(editorDelete())
     expect(getInterceptor()).not.toBeNull()
     pressBack()
+    expect(stayed()).toBe(true)
     expect(screen.queryByRole('alertdialog')).toBeNull()
+    expect(screen.getByRole('heading', { name: 'Edit workout' })).toBeTruthy()
     expect(onDelete).not.toHaveBeenCalled()
-    // Closed, so Back is no longer claimed.
     expect(getInterceptor()).toBeNull()
   })
 
-  it('confirming deletes the workout it was opened for', () => {
+  it('confirming deletes the workout as saved, not as edited', () => {
     const { onDelete } = setup()
-    fireEvent.click(deleteButton())
-    const dialog = screen.getByRole('alertdialog')
-    fireEvent.click(dialog.querySelectorAll('button')[0])
+    fireEvent.change(screen.getByLabelText('Name'), { target: { value: 'Renamed but unsaved' } })
+    fireEvent.click(editorDelete())
+    fireEvent.click(screen.getByRole('alertdialog').querySelectorAll('button')[0])
     expect(onDelete).toHaveBeenCalledExactlyOnceWith(pushDay)
     expect(screen.queryByRole('alertdialog')).toBeNull()
   })

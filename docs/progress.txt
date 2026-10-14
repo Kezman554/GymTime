@@ -610,3 +610,35 @@ INSTALLING GYMTIME ON THE PHONE
 - Testing gotcha: computing a tap point while the soft keyboard is up
   misses once it closes and the layout shifts. Close it (tap elsewhere)
   first.
+
+2026-10-14 — Home on icons; Delete moved into the editor
+- Home header: two 48px circular icon buttons, + (aria-label "New
+  workout", replaces footer New) and cog ("Settings"), drawn in the
+  hairline token as asked — note that is 1.42:1 (light) / 1.56:1 (dark)
+  against the ground, well under the 3:1 usually wanted for a control;
+  muted (7.58 / 7.01) is the obvious fallback if they prove too faint.
+  CLAUDE.md Design now records circular icon-only buttons as the one
+  exception to zero radius.
+- Rows: <li class="workout-item"> holds the select button (aria-pressed)
+  and a 44px edit slot on every row; only the selected row fills it with
+  a pencil button ("Edit <name>"). Bar/tint moved to the item. The old
+  listbox/option roles went: a listbox can't hold a second button.
+  Text starts at x=86 on every row either way. Dial caption removed.
+- Footer is Start alone, full width. Home's Delete, dialog, pushState and
+  back-interceptor plumbing are gone.
+- Editor: Delete (danger outline) below Cancel/Save in Save's column,
+  only when editing a saved workout; it deletes the workout as saved, not
+  as edited. Dialog as before (question names it, Delete left / Cancel
+  right, focus Cancel, rowBottom places Cancel over the editor's Delete).
+  Back uses the timer's pattern: no extra history entry, interceptor
+  closes the dialog and returns true so App re-pushes and the editor stays.
+  App's onDelete removes then backToHome().
+- Tests: homeDelete.test.tsx replaced by home.test.tsx (6) and
+  editorDelete.test.tsx (10). 120 passing, lint clean. Removed orphaned
+  .btn--danger / .btn--icon rules.
+- Verified ON THE A32 (real touches, real Back key): + opens an editor
+  with no Delete; saved "Round Trip"; edit icon 44x44 only on the
+  selected row; editor Delete at 186-344 under Save; dialog "Delete Round
+  Trip?" with Cancel focused; Back closed it and stayed in the editor;
+  confirm returned Home without it; still gone after force-stop +
+  relaunch. Left dark/green (the user's), Core 15 selected.

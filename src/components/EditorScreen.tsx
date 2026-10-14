@@ -1,9 +1,10 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { createId, validateWorkout, type NewWorkout, type Workout } from '../storage'
 import { formatDuration, workoutDurationSeconds } from '../engine/duration'
 import { fromDraft, moveItem, toDraft, type WorkoutDraft } from './draft'
 import { NumberStepper } from './NumberStepper'
 import { ChevronDownIcon, ChevronUpIcon, CrossIcon, PlusIcon } from './icons'
+import { ConfirmDialog } from './ConfirmDialog'
 
 type Field = 'name' | 'exercises' | 'work' | 'rest' | 'loops' | 'betweenLoops'
 
@@ -28,9 +29,13 @@ interface EditorScreenProps {
   initial: NewWorkout | Workout
   onSave: (workout: NewWorkout | Workout) => Promise<void>
   onCancel: () => void
+  /** Deletes the saved workout and returns Home. Only offered for an existing workout. */
+  onDelete: (workout: Workout) => void
+  /** App calls this when Android/browser back is pressed; return true to stay put. */
+  setBackInterceptor: (intercept: (() => boolean) | null) => void
 }
 
-export function EditorScreen({ initial, onSave, onCancel }: EditorScreenProps) {
+export function EditorScreen({ initial, onSave, onCancel, onDelete, setBackInterceptor }: EditorScreenProps) {
   const [draft, setDraft] = useState<WorkoutDraft>(() => toDraft(initial))
   const [touched, setTouched] = useState<Set<Field>>(() => new Set())
   const [attempted, setAttempted] = useState(false)
@@ -78,6 +83,30 @@ export function EditorScreen({ initial, onSave, onCancel }: EditorScreenProps) {
   }
 
   const loopsOff = !draft.loopEnabled
+
+  // Delete exists only for a saved workout, and always deletes it as saved,
+  // not as edited. It asks first; the dialog's row sits over this button.
+  const saved = 'id' in initial ? initial : null
+  const [confirmingDelete, setConfirmingDelete] = useState<{ rowBottom: number } | null>(null)
+  const deleteRef = useRef<HTMLButtonElement>(null)
+  const confirming = confirmingDelete !== null
+
+  // The editor already sits on its own history entry, so like the timer's stop
+  // confirmation, Back is intercepted: it closes the dialog and stays here.
+  useEffect(() => {
+    if (!confirming) return
+    setBackInterceptor(() => {
+      setConfirmingDelete(null)
+      return true
+    })
+    return () => setBackInterceptor(null)
+  }, [confirming, setBackInterceptor])
+
+  const openDelete = () => {
+    if (confirming) return
+    const rect = deleteRef.current?.getBoundingClientRect()
+    setConfirmingDelete({ rowBottom: rect ? window.innerHeight - rect.bottom : 0 })
+  }
 
   return (
     <main className="screen editor">
@@ -266,7 +295,36 @@ export function EditorScreen({ initial, onSave, onCancel }: EditorScreenProps) {
             {saving ? 'Saving…' : 'Save'}
           </button>
         </div>
+
+        {saved && (
+          /* Below Save and on its right, so a double-tap lands on the dialog's Cancel. */
+          <div className="editor__delete-row">
+            <button
+              ref={deleteRef}
+              type="button"
+              className="btn btn--large editor__delete"
+              onClick={openDelete}
+              disabled={saving}
+            >
+              Delete
+            </button>
+          </div>
+        )}
       </div>
+
+      {saved && confirmingDelete && (
+        <ConfirmDialog
+          question={`Delete ${saved.name}?`}
+          detail="This can't be undone."
+          confirmLabel="Delete"
+          rowBottom={confirmingDelete.rowBottom}
+          onCancel={() => setConfirmingDelete(null)}
+          onConfirm={() => {
+            setConfirmingDelete(null)
+            onDelete(saved)
+          }}
+        />
+      )}
     </main>
   )
 }

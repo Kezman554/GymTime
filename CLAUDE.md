@@ -68,6 +68,7 @@ with colour only reinforcing. Never let red be the sole signal.
 **Geometry:**
 - Corner radius is 0. There are no rounded corners anywhere, including
   progress bars and buttons.
+- Exception: circular icon-only buttons are allowed. Every other control stays square.
 - Borders are 1px.
 - Lists and groups are separated by hairline rules. **No cards** — no raised
   surfaces, no tinted panels standing in for structure. The card stack is the

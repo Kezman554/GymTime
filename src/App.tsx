@@ -129,7 +129,18 @@ function App() {
 
   switch (screen.kind) {
     case 'editor':
-      return <EditorScreen initial={screen.initial} onSave={save} onCancel={backToHome} />
+      return (
+        <EditorScreen
+          initial={screen.initial}
+          onSave={save}
+          onCancel={backToHome}
+          onDelete={(workout) => {
+            void remove(workout)
+            backToHome()
+          }}
+          setBackInterceptor={setBackInterceptor}
+        />
+      )
     case 'settings':
       return <SettingsScreen settings={settings} onChange={changeSettings} onDone={backToHome} />
     case 'timer':
@@ -149,9 +160,7 @@ function App() {
           onSelect={select}
           onNew={() => open({ kind: 'editor', initial: { ...DEFAULT_WORKOUT } })}
           onEdit={(workout) => open({ kind: 'editor', initial: workout })}
-          onDelete={(workout) => void remove(workout)}
           onOpenSettings={() => open({ kind: 'settings' })}
-          setBackInterceptor={setBackInterceptor}
           onStart={(workout) => {
             // Inside the tap, so the browser/WebView lets audio start.
             getBeeps().unlock()
