@@ -46,6 +46,16 @@
   --accent-mono: #17160f;
 }
 
+/*
+ * TEMPORARY: light-ground trial (Settings > Light ground). Each candidate
+ * moves hairline/track and muted with the ground; B and D also darken the
+ * accents that would otherwise fall below 4.5:1. Remove once one is baked in.
+ */
+:root[data-theme='light'][data-ground='a'] { --ground: #e8dfc6; --hairline: #c8bc9c; --track: #c8bc9c; --muted: #4b4128; }
+:root[data-theme='light'][data-ground='b'] { --ground: #e3dccb; --hairline: #c3b9a1; --track: #c3b9a1; --muted: #48402e; --accent-orange: #a43f15; }
+:root[data-theme='light'][data-ground='c'] { --ground: #efe4c8; --hairline: #cfc19e; --track: #cfc19e; --muted: #504428; }
+:root[data-theme='light'][data-ground='d'] { --ground: #ded8c6; --hairline: #beb69d; --track: #beb69d; --muted: #443d2a; --accent-orange: #a13d12; --accent-brass: #785811; }
+
 :root,
 :root[data-accent='orange'] { --accent: var(--accent-orange); }
 :root[data-accent='red'] { --accent: var(--accent-red); }

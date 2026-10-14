@@ -1,5 +1,6 @@
-export type { Workout, NewWorkout, Theme, Accent } from './types'
+export type { Workout, NewWorkout, Theme, Accent, LightGround } from './types'
 export {
+  LIGHT_GROUNDS,
   ACCENTS,
   THEMES,
   MIN_LOOPS,

@@ -510,3 +510,23 @@ INSTALLING GYMTIME ON THE PHONE
 - Observations, not changed: the timer header sits flush at the status
   bar's edge; Home has an empty 48px band above the nav bar because both
   .screen and .home__footer pad env(safe-area-inset-bottom).
+
+2026-10-14 — TEMPORARY light-ground trial (in progress)
+- #E9E5DC reads as white on the A32 (low chroma at ~92% OKLab L). Four
+  candidates are selectable in Settings > "Light ground — temporary trial",
+  persisted as Settings.lightGround and applied as data-ground on <html>
+  (index.html inline script + applyAppearance). Light mode only.
+- Measured contrast vs each ground (red/orange/sky/green/brass/mono=ink/
+  danger): now E9E5DC 5.47/4.80/5.50/6.11/5.06/14.43/5.47.
+  A E8DFC6 5.18/4.54/5.20/5.78/4.79/13.64/5.18.
+  B E3DCCB 5.03/4.41!/5.06/5.62/4.66/13.27/5.03 -> orange A43F15 (4.66).
+  C EFE4C8 5.44/4.77/5.47/6.07/5.03/14.34/5.44.
+  D DED8C6 4.83/4.23!/4.86/5.39/4.47!/12.73/4.83 -> orange A13D12 (4.62),
+  brass 785811 (4.60); on-accent on those 5.94 / 5.92.
+- Hairline/track and muted move with the ground, derived in OKLCH from the
+  current pair (same lightness step and chroma offset; muted held at the
+  current 7.5:1): A C8BC9C/4B4128, B C3B9A1/48402E, C CFC19E/504428,
+  D BEB69D/443D2A.
+- To finish: bake the winner into :root[data-theme='light'], delete the
+  data-ground blocks, LIGHT_GROUNDS, Settings.lightGround, the section,
+  the inline-script line and the test fields marked TEMPORARY.
