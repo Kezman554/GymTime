@@ -7,7 +7,8 @@ const sharp = require('sharp')
 
 const dir = path.join(__dirname, '..', 'assets')
 const source = fs.readFileSync(path.join(dir, 'stopwatch.svg'), 'utf8')
-const BG = '#0b0b0d'
+// The dark theme's --ground in src/index.css.
+const BG = '#15171a'
 const glyph = source.match(/<g id="glyph"[\s\S]*<\/g>/)[0]
 
 /** The glyph's bounds are roughly 212..884 tall; centre it and scale it. */

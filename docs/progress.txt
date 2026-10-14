@@ -659,3 +659,24 @@ INSTALLING GYMTIME ON THE PHONE
   up: Exercise 2", ..., "Workout complete"; both rules 2px in go, rest
   and complete vs Home rows 1px. Left dark/green, speech/beeps off, Core
   15 selected. 120 tests passing, lint clean.
+
+2026-10-14 — Icon and splash recoloured
+- assets/stopwatch.svg: ground #15171a (dark --ground), glyph #e8692e
+  (default orange on the dark ground), both copied from src/index.css. A
+  comment records two decisions: the icon bakes in the DEFAULT accent and
+  cannot follow the user's (fixed at build time; identity, not
+  preference), and the sweep stays a filled wedge (a thin ring vanishes at
+  launcher size).
+- render-assets.cjs BG and all four capacitor-assets colour flags ->
+  #15171a (the two splash flags already were). `npm run assets` -> 74
+  resources + favicon.svg. The generator again stripped blank lines from
+  AndroidManifest.xml; reverted. values/ic_launcher_background.xml
+  #0B0B0D -> #15171A (unused: the adaptive icon uses the background PNG,
+  but no stale value left behind).
+- Checked locally from the generated xxxhdpi layers with the 16.7% insets
+  from ic_launcher.xml and a 72/108dp mask: no glyph pixel outside the
+  circle (furthest at 0.67 of the mask radius), ground (21,23,26).
+  Android 12+ draws the cold-start splash from windowSplashScreenBackground
+  (#15171A) plus this launcher icon, so icon and splash match by
+  construction; the splash PNGs are for older Android.
+- NOT yet verified on the phone (A32 off USB after install).
