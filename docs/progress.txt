@@ -727,3 +727,29 @@ INSTALLING GYMTIME ON THE PHONE
   frame vs mark 4.21-4.81 light, 4.38-6.65 dark; vs tint 4.40-5.03 light,
   4.40-6.65 dark. Right edge full accent. Header/first row/selected/Start
   and text x identical to the previous build.
+
+2026-10-14 — TEMPORARY mark-weight x row-translucency trial (in progress)
+- src/trial.ts holds the steps and applyTrial (sets --mark-opacity and
+  --row-alpha on <html> from applyAppearance) and specLineTable (worst
+  spec-line contrast from the live tokens). Settings.trialMark (0-3) and
+  trialRow (0-2) persist. Panel: Settings > "Mark and rows — temporary
+  trial", two radio groups + a 4x3 table, current pair outlined, <4.5
+  cells would show "not shippable" in danger.
+- Steps: mark light 0.12/0.20/0.28/0.36, dark 0.10/0.17/0.24/0.30;
+  unselected rows 100/90/80% (94% measured ~1.02:1 mark-through-row even
+  at 3x weight — imperceptible — so 90/80). Selected row stays opaque.
+- Mark vs ground over the six accents: light 0.12 1.16-1.27, 0.20
+  1.30-1.51, 0.28 1.45-1.81, 0.36 1.63-2.20; dark 0.10 1.11-1.28, 0.17
+  1.21-1.57, 0.24 1.34-1.99, 0.30 1.47-2.40.
+- Spec line worst case (on the A32, matches Python): light 100% 7.58
+  throughout; 90% 7.40/7.29/7.18/7.07; 80% 7.23/7.01/6.79/6.58. Dark 100%
+  7.01; 90% 6.87/6.77/6.67/6.58; 80% 6.73/6.52/6.30/6.12. Nothing in this
+  range is below 4.5:1.
+- Scroll at the heaviest mark, six workouts (only 31px of scroll): stills
+  show the fixed mark staying put while translucent rows slide over it.
+  At 80% the ring reads through rows as one shape continuous with the
+  gap slivers; at 90% the through-row part is so faint the slivers
+  dominate. The opaque selected row cuts a hole in the mark at 90/80%.
+- Persistence checked (0.24 / 90% survived force-stop). User data swapped
+  for the six-workout library and restored byte-identical; trial left at
+  defaults (current values, opaque rows).
