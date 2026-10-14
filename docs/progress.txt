@@ -442,3 +442,27 @@ INSTALLING GYMTIME ON THE PHONE
   5px arc is faint and the accent Pause button is the largest colour block
   in both phases, so it does not help tell them apart.
 - 104 tests passing, lint clean.
+
+2026-10-14 — Bonus (uncarded): delete confirmation dialog
+- The two-tap "Sure?" Delete is gone. Delete opens src/components/
+  ConfirmDialog.tsx: role="alertdialog", aria-modal, labelled by the
+  question ("Delete <name>?") and described by "This can't be undone."
+  Delete LEFT (danger outline, quiet), Cancel RIGHT (ink fill, primary,
+  focused on open) — same deliberate order as the timer's stop confirm.
+  Tab/Shift+Tab stay inside; Escape cancels. Home's header, list and
+  footer are inert while it's open. Over a new --scrim token (both modes).
+- The dialog's button row is placed level with Home's footer row (measured
+  on open), so a double-tap on footer Delete lands on Cancel. openDelete
+  also ignores a second call while open.
+- Back: Home has no history entry, so opening pushes one and sets App's
+  existing back interceptor; Back pops it, the interceptor closes the
+  dialog and returns false (App goes "home", where it already is). Cancel,
+  scrim and confirm close from inside and history.back() the entry.
+- No tests covered the old two-tap behaviour, and there was no component
+  test setup: added @testing-library/react, @testing-library/dom and jsdom
+  (dev). tests/homeDelete.test.tsx (8): single tap opens and deletes
+  nothing, double-tap deletes nothing and pushes one entry, button order +
+  Cancel focus, focus trap, Cancel / scrim / Back each keep the workout,
+  confirm deletes the right one.
+- NOT verified on the phone: the A32 dropped off USB before install.
+- 112 tests passing, lint clean.

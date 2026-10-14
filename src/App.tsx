@@ -151,6 +151,7 @@ function App() {
           onEdit={(workout) => open({ kind: 'editor', initial: workout })}
           onDelete={(workout) => void remove(workout)}
           onOpenSettings={() => open({ kind: 'settings' })}
+          setBackInterceptor={setBackInterceptor}
           onStart={(workout) => {
             // Inside the tap, so the browser/WebView lets audio start.
             getBeeps().unlock()

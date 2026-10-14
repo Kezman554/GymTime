@@ -16,6 +16,7 @@
   --track: #343a40;
   --on-accent: #0a1218;
   --danger: #e8504f;
+  --scrim: rgb(0 0 0 / 0.6);
 
   --accent-red: #e8504f;
   --accent-orange: #e8692e;
@@ -35,6 +36,7 @@
   --track: #c9c2b2;
   --on-accent: #f6f3ec;
   --danger: #ae2318;
+  --scrim: rgb(23 22 15 / 0.45);
 
   --accent-red: #ae2318;
   --accent-orange: #a8431a;

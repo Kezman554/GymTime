@@ -1,6 +1,7 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import type { Workout } from '../storage'
 import { formatDuration, workoutDurationSeconds } from '../engine/duration'
+import { ConfirmDialog } from './ConfirmDialog'
 
 interface HomeScreenProps {
   workouts: Workout[]
@@ -11,6 +12,8 @@ interface HomeScreenProps {
   onDelete: (workout: Workout) => void
   onStart: (workout: Workout) => void
   onOpenSettings: () => void
+  /** App calls this when Android/browser back is pressed; return true to stay put. */
+  setBackInterceptor: (intercept: (() => boolean) | null) => void
 }
 
 function summary(workout: Workout): string {
@@ -30,15 +33,42 @@ export function HomeScreen({
   onDelete,
   onStart,
   onOpenSettings,
+  setBackInterceptor,
 }: HomeScreenProps) {
   const selected = workouts.find((workout) => workout.id === selectedId) ?? null
-  // Delete takes two taps: the first arms it for the selected workout, the second deletes.
-  const [armedDeleteId, setArmedDeleteId] = useState<string | null>(null)
-  const deleteArmed = selected !== null && armedDeleteId === selected.id
+  // Delete asks first. The dialog keeps the workout it was opened for.
+  const [pendingDelete, setPendingDelete] = useState<{ workout: Workout; rowBottom: number } | null>(null)
+  const deleteRef = useRef<HTMLButtonElement>(null)
+  const confirming = pendingDelete !== null
+
+  // Home has no history entry of its own, so opening the dialog pushes one for
+  // Back to consume. Back then reaches the interceptor, which closes the
+  // dialog; returning false lets App carry on to Home, where we already are.
+  useEffect(() => {
+    if (!confirming) return
+    setBackInterceptor(() => {
+      setPendingDelete(null)
+      return false
+    })
+    return () => setBackInterceptor(null)
+  }, [confirming, setBackInterceptor])
+
+  const openDelete = (workout: Workout) => {
+    if (confirming) return
+    const rect = deleteRef.current?.getBoundingClientRect()
+    window.history.pushState({ screen: 'confirm-delete' }, '')
+    setPendingDelete({ workout, rowBottom: rect ? window.innerHeight - rect.bottom : 0 })
+  }
+
+  // Cancel, scrim and confirm close it from inside, so the entry pushed on open comes off too.
+  const closeDelete = () => {
+    setPendingDelete(null)
+    window.history.back()
+  }
 
   return (
     <main className="screen home">
-      <header className="screen__header home__header">
+      <header className="screen__header home__header" inert={confirming}>
         <h1 className="screen__title">GymTime</h1>
         <button type="button" className="btn btn--icon" aria-label="Settings" onClick={onOpenSettings}>
           <svg
@@ -61,7 +91,7 @@ export function HomeScreen({
       {workouts.length === 0 ? (
         <p className="empty">No workouts yet. Tap New to make one.</p>
       ) : (
-        <ul className="workout-list" role="listbox" aria-label="Saved workouts">
+        <ul className="workout-list" role="listbox" aria-label="Saved workouts" inert={confirming}>
           {workouts.map((workout) => (
             <li key={workout.id}>
               <button
@@ -79,7 +109,7 @@ export function HomeScreen({
         </ul>
       )}
 
-      <div className="home__footer">
+      <div className="home__footer" inert={confirming}>
         <div className="button-row button-row--three">
           <button type="button" className="btn btn--large" onClick={onNew}>
             New
@@ -93,20 +123,13 @@ export function HomeScreen({
             Edit
           </button>
           <button
+            ref={deleteRef}
             type="button"
-            className={`btn btn--large btn--danger${deleteArmed ? ' is-armed' : ''}`}
+            className="btn btn--large btn--danger"
             disabled={!selected}
-            onClick={() => {
-              if (!selected) return
-              if (deleteArmed) {
-                setArmedDeleteId(null)
-                onDelete(selected)
-              } else {
-                setArmedDeleteId(selected.id)
-              }
-            }}
+            onClick={() => selected && openDelete(selected)}
           >
-            {deleteArmed ? 'Sure?' : 'Delete'}
+            Delete
           </button>
         </div>
         <button
@@ -118,6 +141,20 @@ export function HomeScreen({
           Start
         </button>
       </div>
+
+      {pendingDelete && (
+        <ConfirmDialog
+          question={`Delete ${pendingDelete.workout.name}?`}
+          detail="This can't be undone."
+          confirmLabel="Delete"
+          rowBottom={pendingDelete.rowBottom}
+          onCancel={closeDelete}
+          onConfirm={() => {
+            closeDelete()
+            onDelete(pendingDelete.workout)
+          }}
+        />
+      )}
     </main>
   )
 }
