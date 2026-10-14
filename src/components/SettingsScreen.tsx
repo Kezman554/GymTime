@@ -1,4 +1,4 @@
-import { ACCENTS, LIGHT_GROUNDS, THEMES, type Accent, type LightGround, type Settings, type Theme } from '../storage'
+import { ACCENTS, THEMES, type Accent, type Settings, type Theme } from '../storage'
 
 interface SettingsScreenProps {
   settings: Settings
@@ -16,16 +16,6 @@ const ACCENT_LABEL: Record<Accent, string> = {
   green: 'Green',
   brass: 'Brass',
   mono: 'Mono',
-}
-
-/** TEMPORARY: light-ground trial. Hex shown so the choice can be reported back. */
-const GROUND_LABEL: Record<LightGround, string> = {
-  current: 'Current · #E9E5DC',
-  a: 'A · #E8DFC6',
-  e: 'E · #ECE0BD',
-  f: 'F · #EFDFB3',
-  g: 'G · #EEDDC2',
-  h: 'H · #F3DBCB',
 }
 
 const SOUND_OPTIONS: { key: 'speech' | 'beeps'; label: string }[] = [
@@ -108,32 +98,6 @@ export function SettingsScreen({ settings, onChange, onDone }: SettingsScreenPro
             </li>
           ))}
         </ul>
-      </section>
-
-      {/* TEMPORARY: light-ground trial. Remove the section once a ground is baked in. */}
-      <section className="settings__section" aria-labelledby="settings-ground">
-        <h2 id="settings-ground" className="section-label">
-          Light ground — temporary trial
-        </h2>
-        <p className="settings__note">Light mode only. Pick one, then live with it for a while.</p>
-        {/* Pure white beside the ground, so "reads as white" can be judged against the real thing. */}
-        <div className="ground-trial__white" aria-hidden="true">
-          White reference
-        </div>
-        <div className="ground-trial" role="radiogroup" aria-labelledby="settings-ground">
-          {LIGHT_GROUNDS.map((ground) => (
-            <button
-              key={ground}
-              type="button"
-              role="radio"
-              aria-checked={settings.lightGround === ground}
-              className={`btn ground-trial__option${settings.lightGround === ground ? ' is-selected' : ''}`}
-              onClick={() => onChange({ lightGround: ground })}
-            >
-              {GROUND_LABEL[ground]}
-            </button>
-          ))}
-        </div>
       </section>
 
       <div className="settings__footer">

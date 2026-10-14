@@ -24,10 +24,6 @@ export type Theme = (typeof THEMES)[number]
 export const ACCENTS = ['red', 'orange', 'sky', 'green', 'brass', 'mono'] as const
 export type Accent = (typeof ACCENTS)[number]
 
-/** TEMPORARY: light-ground trial. 'current' is the shipped #E9E5DC. */
-export const LIGHT_GROUNDS = ['current', 'a', 'e', 'f', 'g', 'h'] as const
-export type LightGround = (typeof LIGHT_GROUNDS)[number]
-
 export const MIN_SECONDS = 5
 export const MIN_LOOPS = 1
 

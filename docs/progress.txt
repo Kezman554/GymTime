@@ -511,7 +511,7 @@ INSTALLING GYMTIME ON THE PHONE
   bar's edge; Home has an empty 48px band above the nav bar because both
   .screen and .home__footer pad env(safe-area-inset-bottom).
 
-2026-10-14 — TEMPORARY light-ground trial (in progress)
+2026-10-14 — Light-ground trial (finished, removed; see next entry)
 - #E9E5DC reads as white on the A32 (low chroma at ~92% OKLab L). Four
   candidates are selectable in Settings > "Light ground — temporary trial",
   persisted as Settings.lightGround and applied as data-ground on <html>
@@ -542,3 +542,22 @@ INSTALLING GYMTIME ON THE PHONE
   Orange, not brass, is the binding constraint on every candidate.
   Hairline/track + muted: E CBBD93/4E421E, F CEBC89/514112, G CFBA98/
   504024, H D5B7A2/553D2D (muted ~7.5:1 throughout).
+
+2026-10-14 — Light ground baked: A
+- Light tokens: ground #E8DFC6, hairline/track #C8BC9C, muted #4B4128,
+  orange #9E3D14 (was #A8431A at 4.54:1 on A — no headroom; HSL hue 17.8
+  vs 17.3, same shade darker). Dark orange #E8692E unchanged.
+- Measured vs #E8DFC6: red 5.18, orange 5.05, sky 5.20, green 5.78,
+  brass 4.79, mono 13.64, danger 5.18, ink 13.64, muted 7.58, hairline
+  1.42. On-accent #F6F3EC on light accents: red 6.21, orange 6.05, sky
+  6.24, green 6.93, brass 5.74, mono 16.36. Brass is now the tightest.
+- Trial removed entirely: data-ground blocks, LIGHT_GROUNDS,
+  Settings.lightGround, the settings section and white strip, the inline
+  script line, the test fields. Diff vs 63402a1 is the token values only.
+  A stale "lightGround" key in saved settings is ignored and dropped on
+  the next save.
+- Verified ON THE A32, light mode, every accent: Settings, Home, editor,
+  work, rest (30 frames) — accent text/arc/selected border and on-accent
+  button text measured in-page, all as above. Dark mode: every token
+  unchanged, orange 5.55 / on-accent 5.83 as before. Left on light/sky,
+  Core 15 selected.

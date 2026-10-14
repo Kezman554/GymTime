@@ -28,35 +28,23 @@
 
 :root[data-theme='light'] {
   color-scheme: light;
-  --ground: #e9e5dc;
+  --ground: #e8dfc6;
   --ink: #17160f;
-  --muted: #4a463a;
+  --muted: #4b4128;
   --rule: #17160f;
-  --hairline: #c9c2b2;
-  --track: #c9c2b2;
+  --hairline: #c8bc9c;
+  --track: #c8bc9c;
   --on-accent: #f6f3ec;
   --danger: #ae2318;
   --scrim: rgb(23 22 15 / 0.45);
 
   --accent-red: #ae2318;
-  --accent-orange: #a8431a;
+  --accent-orange: #9e3d14;
   --accent-sky: #0b5e93;
   --accent-green: #2f5d34;
   --accent-brass: #7a5a14;
   --accent-mono: #17160f;
 }
-
-/*
- * TEMPORARY: light-ground trial, round two (Settings > Light ground). Each
- * candidate moves hairline/track and muted with the ground. G and H were
- * lightened from #ECDBC0 / #EED6C6 so orange clears 4.5:1. Remove once one
- * is baked in.
- */
-:root[data-theme='light'][data-ground='a'] { --ground: #e8dfc6; --hairline: #c8bc9c; --track: #c8bc9c; --muted: #4b4128; }
-:root[data-theme='light'][data-ground='e'] { --ground: #ece0bd; --hairline: #cbbd93; --track: #cbbd93; --muted: #4e421e; }
-:root[data-theme='light'][data-ground='f'] { --ground: #efdfb3; --hairline: #cebc89; --track: #cebc89; --muted: #514112; }
-:root[data-theme='light'][data-ground='g'] { --ground: #eeddc2; --hairline: #cfba98; --track: #cfba98; --muted: #504024; }
-:root[data-theme='light'][data-ground='h'] { --ground: #f3dbcb; --hairline: #d5b7a2; --track: #d5b7a2; --muted: #553d2d; }
 
 :root,
 :root[data-accent='orange'] { --accent: var(--accent-orange); }

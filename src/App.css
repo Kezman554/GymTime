@@ -354,45 +354,6 @@
   font-weight: 700;
 }
 
-/* TEMPORARY: light-ground trial. */
-
-.settings__note {
-  margin: 0;
-  font-size: 1rem;
-  color: var(--muted);
-}
-
-.ground-trial {
-  display: flex;
-  flex-direction: column;
-}
-
-.ground-trial__white {
-  padding: 0.75rem 1rem;
-  border: 1px solid var(--rule);
-  background: #fff;
-  color: #000;
-  font-weight: 700;
-}
-
-.ground-trial__option {
-  justify-content: flex-start;
-  text-align: left;
-  background: transparent;
-  color: var(--ink);
-  font-size: 1.125rem;
-}
-
-.ground-trial__option + .ground-trial__option {
-  border-top-width: 0;
-}
-
-.ground-trial__option.is-selected {
-  border-color: var(--ink);
-  background: var(--ink);
-  color: var(--ground);
-}
-
 /* Editor */
 
 .field {

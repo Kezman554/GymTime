@@ -9,13 +9,12 @@ describe('SettingsStore', () => {
       beeps: true,
       theme: 'dark',
       accent: 'orange',
-      lightGround: 'current',
     })
   })
 
   it('persists across store instances on the same storage', async () => {
     const kv = new MemoryKeyValueStore()
-    const saved = { speech: false, beeps: true, theme: 'light', accent: 'sky', lightGround: 'e' } as const
+    const saved = { speech: false, beeps: true, theme: 'light', accent: 'sky' } as const
     await new SettingsStore(kv).save(saved)
     expect(await new SettingsStore(kv).load()).toEqual(saved)
   })
