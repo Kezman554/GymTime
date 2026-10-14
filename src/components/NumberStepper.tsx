@@ -1,4 +1,5 @@
 import { parseWhole } from './draft'
+import { MinusIcon, PlusIcon } from './icons'
 
 interface NumberStepperProps {
   id: string
@@ -55,12 +56,12 @@ export function NumberStepper({
           onClick={() => nudge(-1)}
           disabled={disabled || (!Number.isNaN(current) && current <= min)}
         >
-          −
+          <MinusIcon />
         </button>
-        <div className="stepper__value">
+        <div className={`stepper__value${invalid ? ' is-invalid' : ''}`}>
           <input
             id={id}
-            className={`stepper__input${invalid ? ' is-invalid' : ''}`}
+            className="stepper__input"
             type="text"
             inputMode="numeric"
             pattern="[0-9]*"
@@ -82,7 +83,7 @@ export function NumberStepper({
           onClick={() => nudge(1)}
           disabled={disabled || (!Number.isNaN(current) && current >= max)}
         >
-          +
+          <PlusIcon />
         </button>
       </div>
     </div>

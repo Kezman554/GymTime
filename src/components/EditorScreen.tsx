@@ -3,6 +3,7 @@ import { createId, validateWorkout, type NewWorkout, type Workout } from '../sto
 import { formatDuration, workoutDurationSeconds } from '../engine/duration'
 import { fromDraft, moveItem, toDraft, type WorkoutDraft } from './draft'
 import { NumberStepper } from './NumberStepper'
+import { ChevronDownIcon, ChevronUpIcon, CrossIcon, PlusIcon } from './icons'
 
 type Field = 'name' | 'exercises' | 'work' | 'rest' | 'loops' | 'betweenLoops'
 
@@ -127,68 +128,71 @@ export function EditorScreen({ initial, onSave, onCancel }: EditorScreenProps) {
                 <div className="exercise-row__actions">
                   <button
                     type="button"
-                    className="btn btn--icon"
+                    className="btn exercise-row__btn"
                     aria-label={`Move ${label} up`}
                     disabled={index === 0}
                     onClick={() => setExercises(moveItem(draft.exercises, index, index - 1))}
                   >
-                    ▲
+                    <ChevronUpIcon />
                   </button>
                   <button
                     type="button"
-                    className="btn btn--icon"
+                    className="btn exercise-row__btn"
                     aria-label={`Move ${label} down`}
                     disabled={index === draft.exercises.length - 1}
                     onClick={() => setExercises(moveItem(draft.exercises, index, index + 1))}
                   >
-                    ▼
+                    <ChevronDownIcon />
                   </button>
                   <button
                     type="button"
-                    className="btn btn--icon btn--danger"
+                    className="btn exercise-row__btn exercise-row__btn--remove"
                     aria-label={`Remove ${label}`}
                     disabled={draft.exercises.length === 1}
                     onClick={() =>
                       setExercises(draft.exercises.filter((item) => item.key !== exercise.key))
                     }
                   >
-                    ✕
+                    <CrossIcon />
                   </button>
                 </div>
               </li>
             )
           })}
         </ol>
-        <button type="button" className="btn btn--wide" onClick={addExercise}>
-          + Add exercise
+        <button type="button" className="btn btn--wide add-exercise" onClick={addExercise}>
+          <PlusIcon />
+          Add exercise
         </button>
       </section>
 
       <section className="field steppers">
-        <NumberStepper
-          id="work-seconds"
-          label="Work"
-          unit="s"
-          value={draft.workSeconds}
-          onChange={(workSeconds) => update('work', { workSeconds })}
-          step={5}
-          min={5}
-          max={MAX_SECONDS}
-          invalid={invalid('work')}
-        />
-        <NumberStepper
-          id="rest-seconds"
-          label="Rest"
-          unit="s"
-          value={draft.restSeconds}
-          onChange={(restSeconds) => update('rest', { restSeconds })}
-          step={5}
-          min={5}
-          max={MAX_SECONDS}
-          invalid={invalid('rest')}
-        />
+        <div className="stepper-pair">
+          <NumberStepper
+            id="work-seconds"
+            label="Work"
+            unit="s"
+            value={draft.workSeconds}
+            onChange={(workSeconds) => update('work', { workSeconds })}
+            step={5}
+            min={5}
+            max={MAX_SECONDS}
+            invalid={invalid('work')}
+          />
+          <NumberStepper
+            id="rest-seconds"
+            label="Rest"
+            unit="s"
+            value={draft.restSeconds}
+            onChange={(restSeconds) => update('rest', { restSeconds })}
+            step={5}
+            min={5}
+            max={MAX_SECONDS}
+            invalid={invalid('rest')}
+          />
+        </div>
 
-        <div className="toggle-row">
+        <div className="toggle-row toggle-row--ruled">
           <span className="field__label" id="loop-toggle-label">
             Loop
           </span>
@@ -204,32 +208,34 @@ export function EditorScreen({ initial, onSave, onCancel }: EditorScreenProps) {
           </button>
         </div>
 
-        <NumberStepper
-          id="loops"
-          label="Loops"
-          value={draft.loops}
-          onChange={(loops) => update('loops', { loops })}
-          step={1}
-          min={1}
-          max={MAX_LOOPS}
-          disabled={loopsOff}
-          invalid={invalid('loops')}
-        />
-        <NumberStepper
-          id="rest-between-loops"
-          label="Rest between loops"
-          unit="s"
-          zeroLabel="Off"
-          value={draft.restBetweenLoopsSeconds}
-          onChange={(restBetweenLoopsSeconds) =>
-            update('betweenLoops', { restBetweenLoopsSeconds })
-          }
-          step={5}
-          min={0}
-          max={MAX_SECONDS}
-          disabled={loopsOff}
-          invalid={invalid('betweenLoops')}
-        />
+        <div className="stepper-pair">
+          <NumberStepper
+            id="loops"
+            label="Loops"
+            value={draft.loops}
+            onChange={(loops) => update('loops', { loops })}
+            step={1}
+            min={1}
+            max={MAX_LOOPS}
+            disabled={loopsOff}
+            invalid={invalid('loops')}
+          />
+          <NumberStepper
+            id="rest-between-loops"
+            label="Rest between loops"
+            unit="s"
+            zeroLabel="Off"
+            value={draft.restBetweenLoopsSeconds}
+            onChange={(restBetweenLoopsSeconds) =>
+              update('betweenLoops', { restBetweenLoopsSeconds })
+            }
+            step={5}
+            min={0}
+            max={MAX_SECONDS}
+            disabled={loopsOff}
+            invalid={invalid('betweenLoops')}
+          />
+        </div>
       </section>
 
       <div className="editor__footer">
@@ -248,7 +254,7 @@ export function EditorScreen({ initial, onSave, onCancel }: EditorScreenProps) {
         )}
 
         <div className="button-row">
-          <button type="button" className="btn btn--large" onClick={onCancel} disabled={saving}>
+          <button type="button" className="btn btn--large btn--outline" onClick={onCancel} disabled={saving}>
             Cancel
           </button>
           <button
