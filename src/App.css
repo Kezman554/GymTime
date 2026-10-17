@@ -92,6 +92,16 @@
   letter-spacing: 0.02em;
 }
 
+/*
+ * Pill ends for the large in-workout actions: Home's Start and the timer's
+ * action row (see CLAUDE.md, Geometry). 999px keeps the ends true semicircles
+ * at any width; the focus outline follows the radius.
+ */
+.btn--start,
+.timer__btn {
+  border-radius: 999px;
+}
+
 .button-row {
   display: flex;
   gap: 0.75rem;
@@ -333,7 +343,8 @@
 }
 
 /*
- * Circular icon-only buttons: the one exception to zero radius (see CLAUDE.md).
+ * Circular icon-only buttons: one of the two exceptions to zero radius, beside
+ * the pill-shaped Start and timer actions (see CLAUDE.md).
  * Soft grey in both modes: the ring is hairline, the icon half-way from
  * hairline to muted, which clears 3:1 on the ground (3.01 light, 3.48 dark).
  */

@@ -66,9 +66,10 @@ signalled by their wording and by treatment — a question, a rule, an outline �
 with colour only reinforcing. Never let red be the sole signal.
 
 **Geometry:**
-- Corner radius is 0. There are no rounded corners anywhere, including
-  progress bars and buttons.
-- Exception: circular icon-only buttons are allowed. Every other control stays square.
+- Corner radius is 0 everywhere, including progress bars and buttons, with
+  two exceptions: circular icon-only buttons are allowed, and the large
+  in-workout action buttons (Home's Start and the timer screen's action row)
+  are pill-shaped. Every other control stays square.
 - Borders are 1px.
 - Lists and groups are separated by hairline rules. **No cards** — no raised
   surfaces, no tinted panels standing in for structure. The card stack is the

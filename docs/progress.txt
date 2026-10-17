@@ -791,3 +791,15 @@ INSTALLING GYMTIME ON THE PHONE
 - Verified ON THE A32 via devtools attributes only (no storage writes):
   light red/mono, dark mono/orange; pencil visible and still grey, 44x44.
   Device-computed ratios match (light/mono 3.20, dark/mono 3.42).
+
+2026-10-17 — Pill-shaped Start and timer actions
+- .btn--start and .timer__btn get border-radius: 999px (all timer action
+  buttons: Pause/Resume, Stop, Keep going, Done). Everything else stays at
+  --radius 0. CLAUDE.md Geometry now lists the pills as the second
+  exception; .round-btn comment updated to match.
+- Verified ON THE A32 (WebView Chrome 155): Start pill; Tab-focus ring
+  (3px accent) follows the pill, no square box. Ran Test 3x10 to the end
+  with sound off, paused once and opened the stop confirm: paired buttons
+  are separate pills, 158px each with a 12px gap; Done is a pill. Editor
+  and Settings buttons all read 0px radius. Storage restored
+  byte-identical from a backup afterwards.
