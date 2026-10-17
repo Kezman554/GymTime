@@ -318,8 +318,11 @@
   border: 0;
   border-radius: var(--radius);
   background: transparent;
-  /* The same soft grey as the round + and cog icons. */
-  color: color-mix(in srgb, var(--hairline), var(--muted));
+  /* A soft grey like the round + and cog icons, but leaning further towards
+     muted: the pencil only sits on the selected row's accent tint, where the
+     50/50 mix fell to 2.45:1. At 35/65 the worst case over all six accents is
+     3.20:1 in light (mono) and 3.40:1 in dark (mono). */
+  color: color-mix(in srgb, var(--hairline) 35%, var(--muted));
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
 }
